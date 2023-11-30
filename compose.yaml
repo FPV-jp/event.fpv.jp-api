@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+
+  ##########################################################################
+  # MariaDB
+  ##########################################################################
+  mariadb:
+    image: mariadb:10.6.15
+    container_name: mariadb
+    hostname: mariadb
+    command: --default-authentication-plugin=caching_sha2_password
+    restart: always
+    env_file:
+      - ./.env
+    ports:
+      - 3306:3306
+    networks:
+      - backnet
+    secrets:
+      - password
+    healthcheck:
+      test: ['CMD-SHELL', 'mariadb-admin ping -h 127.0.0.1 --password="$$(cat /run/secrets/password)" --silent']
+      start_period: 5s
+      interval: 5s
+      timeout: 2s
+      retries: 3
+    volumes:
+      - ./mariadb/initdb:/docker-entrypoint-initdb.d
+      - ./mariadb/data:/var/lib/mysql
+
+secrets:
+  password:
+    file: mariadb/secrets/password.txt
+
+networks:
+  backnet:
+    name: fpv-backend

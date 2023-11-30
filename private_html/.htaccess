@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /
+RewriteRule ^api/.*$ index.php [L]
+RewriteRule ^graphql$ /graphql.php [L]
+RewriteRule ^graphql/ /graphql.php [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.(html|php|css|jpg|js|json|xml|gif|ico|png|txt|svg|woff|woff2|ttf|map|webp) [NC]
+RewriteRule ^ /index.html [L]

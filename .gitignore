@@ -1,0 +1,4 @@
+/vendor/
+.env
+mariadb/data/
+src/doctrine/
