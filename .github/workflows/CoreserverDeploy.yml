@@ -42,10 +42,10 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    # - name: Run PHPUnit test suite
-    #   run: composer test
+    - name: Run PHPUnit test suite
+      run: composer test
 
-    - name: (Deploy) Copy file via ssh password
+    - name: (Deploy prod) Copy file via ssh event.fpv.jp
       if: github.ref == 'refs/heads/main'
       uses: appleboy/scp-action@v0.1.4
       with:
@@ -57,7 +57,7 @@ jobs:
         target: /home/fpv/domains/event.fpv.jp/
         overwrite: true
 
-    - name: (Deploy dev) Copy file via ssh password
+    - name: (Deploy dev) Copy file via ssh fpv.v2008.coreserver.jp
       if: github.ref == 'refs/heads/dev'
       uses: appleboy/scp-action@v0.1.4
       with:
