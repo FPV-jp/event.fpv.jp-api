@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-Dotenv\Dotenv::createImmutable(__DIR__)->load();
+use Dotenv\Dotenv;
+
+Dotenv::createImmutable(__DIR__)->load();
 
 const APP_ROOT = __DIR__;
 

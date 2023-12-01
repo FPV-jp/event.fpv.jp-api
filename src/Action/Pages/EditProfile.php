@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace UMA\FpvJpApi\Action;
+namespace UMA\FpvJpApi\Action\Pages;
 
 use Doctrine\ORM\EntityManager;
 use Faker\Generator;
@@ -14,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use UMA\FpvJpApi\Domain\User;
 use function json_encode;
 
-final class CreateUser implements RequestHandlerInterface
+final class EditProfile implements RequestHandlerInterface
 {
     private EntityManager $em;
     private Generator $faker;
@@ -27,13 +27,13 @@ final class CreateUser implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $newRandomUser = new User($this->faker->email(), $this->faker->password());
+        /** @var User[] $users */
+        $users = $this->em
+            ->getRepository(User::class)
+            ->findAll();
 
-        $this->em->persist($newRandomUser);
-        $this->em->flush();
+        $body = Stream::create(json_encode($users, JSON_PRETTY_PRINT) . PHP_EOL);
 
-        $body = Stream::create(json_encode($newRandomUser, JSON_PRETTY_PRINT) . PHP_EOL);
-
-        return new Response(201, ['Content-Type' => 'application/json'], $body);
+        return new Response(200, ['Content-Type' => 'application/json'], $body);
     }
 }

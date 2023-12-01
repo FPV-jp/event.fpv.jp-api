@@ -8,6 +8,11 @@ use Slim\App;
 use UMA\DIC\Container;
 use UMA\FpvJpApi\DI;
 use Slim\Exception\HttpNotFoundException;
+use Psr\Log\LoggerInterface;
+use UMA\FpvJpApi\DI\MonologLogger;
+use UMA\FpvJpApi\FpvJpApi;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 /** @var Container $cnt */
 $cnt = require_once __DIR__ . '/../bootstrap.php';
@@ -55,6 +60,8 @@ $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($
  * Note: This middleware should be added last. It will not handle any exceptions/errors
  * for middleware added after it.
  */
-$errorMiddleware = $app->addErrorMiddleware(true, true, true);
-  
+$logger = new MonologLogger('example_logger', [new StreamHandler(__DIR__.'/app.log', Logger::DEBUG)]);
+$errorMiddleware = $app->addErrorMiddleware(true, true, true, $logger);
+$logger->info('This is an informational message.');
+
 $app->run();

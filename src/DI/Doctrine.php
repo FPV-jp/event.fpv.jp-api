@@ -12,6 +12,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Logging\SQLLogger;
 
 /**
  * A ServiceProvider for registering services related to
@@ -40,10 +41,33 @@ final class Doctrine implements ServiceProvider
                     new FilesystemAdapter(directory: $settings['doctrine']['cache_dir']),
                 true
             );
-
-            // return EntityManager::create($settings['doctrine']['connection'], $config);
+            if ($settings['doctrine']['dev_mode']){
+                $config->setSQLLogger(new EchoSQLLogger());
+            }
             $connection = DriverManager::getConnection($settings['doctrine']['connection'], $config);
             return new EntityManager($connection, $config);
         });
+    }
+}
+
+class EchoSQLLogger implements SQLLogger
+{
+    public function startQuery($sql, array $params = null, array $types = null)
+    {
+        error_log($sql);
+
+        if ($params) {
+            error_log("Parameters: " . print_r($params, true));
+        }
+
+        if ($types) {
+            error_log("Types: " . print_r($types, true));
+        }
+
+    }
+
+    public function stopQuery()
+    {
+
     }
 }

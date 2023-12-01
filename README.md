@@ -65,18 +65,18 @@ Slim-Doctrine-Demo
 
 ## Running the app
 Typing `composer serve` in a console will install the project dependencies, create the database and open
-the API at `http://localhost:8000`. Once it is running you can make requests against it with a browser,
+the API at `http://localhost:8001`. Once it is running you can make requests against it with a browser,
 curl or similar tools.
 
 ```bash
-$ curl -X POST localhost:8000/api/users
+$ curl -X POST localhost:8001/api/users
 {
     "id": 2,
     "email": "oraynor@oconnell.info",
     "registered_at": "2022-01-15T23:10:51+01:00"
 }
 
-$ curl -X GET localhost:8000/api/users
+$ curl -X GET localhost:8001/api/users
 [
     {
         "id": 1,

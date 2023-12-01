@@ -16,14 +16,18 @@
     "require": {
         "php": "~8.1.0",
         "ext-json": "*",
-        "vlucas/phpdotenv": "^5.6",
+        "auth0/auth0-php": "^8.10",
         "doctrine/orm": "^2.17",
         "fakerphp/faker": "^1.23",
+        "guzzlehttp/guzzle": "^7.8",
+        "monolog/monolog": "^3.5",
         "nyholm/psr7": "^1.8",
         "nyholm/psr7-server": "^1.1",
+        "phpmailer/phpmailer": "^6.9",
         "slim/slim": "^4.12",
         "symfony/cache": "^6.4",
-        "uma/dic": "^3.0"
+        "uma/dic": "^3.0",
+        "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",
@@ -33,7 +37,7 @@
         "serve": [
             "@composer install",
             "./mariadb/doctrine orm:schema:update --force",
-            "php -S localhost:8000 -t private_html private_html/index.php"
+            "php -S localhost:8001 -t private_html private_html/index.php"
         ],
         "test": [
             "php vendor/bin/phpunit"
@@ -43,7 +47,8 @@
         "process-timeout": 0,
         "sort-packages": true,
         "allow-plugins": {
-            "composer/package-versions-deprecated": true
+            "composer/package-versions-deprecated": true,
+            "php-http/discovery": true
         }
     }
 }

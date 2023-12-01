@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
-use Slim\Container;
+use UMA\DIC\Container;
 
 /** @var Container $container */
 $container = require_once __DIR__ . '/bootstrap.php';

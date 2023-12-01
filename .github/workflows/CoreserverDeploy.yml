@@ -17,6 +17,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: (Env) Fix .env for production
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "${{ secrets.PROD_ENV }}" > .env
+
+    - name: (Env) Fix .env for development
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        echo "${{ secrets.DEV_ENV }}" > .env
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
@@ -28,11 +38,6 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
-
-    - name: (Env) Fix .env for production
-      run: |
-        cat .env.example > .env
-        sed -i 's/password/${{ secrets.PROD_MARIADB_PASSWORD }}/g' .env
 
     # - name: Set up PHP
     #   uses: shivammathur/setup-php@v2
