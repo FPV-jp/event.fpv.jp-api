@@ -37,13 +37,19 @@ $app->add(function ($request, $handler) {
 
 /**
  * The routing middleware should be added earlier than the ErrorMiddleware
-* Otherwise exceptions thrown from it will not be handled by the middleware
+ * Otherwise exceptions thrown from it will not be handled by the middleware
+ *
+ * ルーティング ミドルウェアは、ErrorMiddleware よりも前に追加する必要があります。
+ * そうしないと、ルーティング ミドルウェアからスローされた例外がミドルウェアによって処理されません。
 */
 $app->addRoutingMiddleware();
 
 /**
  * Catch-all route to serve a 404 Not Found page if none of the routes match
  * NOTE: make sure this route is defined last
+ * 
+ * どのルートも一致しない場合に 404 Not Found ページを提供するキャッチオール ルート
+ * 注: このルートが最後に定義されていることを確認してください
  */
 $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
     throw new HttpNotFoundException($request);
@@ -57,11 +63,14 @@ $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($
  * @param bool                  $logErrorDetails -> Display error details in error log
  * @param LoggerInterface|null  $logger -> Optional PSR-3 Logger  
  *
- * Note: This middleware should be added last. It will not handle any exceptions/errors
- * for middleware added after it.
+ * Note: This middleware should be added last. 
+ * It will not handle any exceptions/errors for middleware added after it.
+ * 
+ * 注: このミドルウェアは最後に追加する必要があります。
+ * その後に追加されたミドルウェアの例外/エラーは処理されません。
  */
 $logger = new MonologLogger('example_logger', [new StreamHandler(__DIR__.'/app.log', Logger::DEBUG)]);
 $errorMiddleware = $app->addErrorMiddleware(true, true, true, $logger);
-$logger->info('This is an informational message.');
+// $logger->info('This is an informational message.');
 
 $app->run();
