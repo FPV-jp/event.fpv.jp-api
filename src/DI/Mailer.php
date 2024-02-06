@@ -64,12 +64,12 @@ final class Mailer implements ServiceProvider
         //     // Server settings
         //     // $mail = new PHPMailer(true);
         //     // $mail->isSMTP();
-            $mail->Host = 'v2008.coreserver.jp';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'fpv@fpv.jp';
-            $mail->Password = '';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 465;
+            // $mail->Host = 'v2008.coreserver.jp';
+            // $mail->SMTPAuth = true;
+            // $mail->Username = 'fpv@fpv.jp';
+            // $mail->Password = '';
+            // $mail->SMTPSecure = 'tls';
+            // $mail->Port = 465;
 
         //     // // Recipients
         //     // $mail->setFrom('fpv@fpv.jp', 'Your Name');

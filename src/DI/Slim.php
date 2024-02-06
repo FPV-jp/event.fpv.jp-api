@@ -21,19 +21,19 @@ use UMA\FpvJpApi\DI\PermissionMiddleware;
 use UMA\FpvJpApi\Action\CreateUser;
 use UMA\FpvJpApi\Action\ListUsers;
 
-use UMA\FpvJpApi\Action\Dashboard;
+// use UMA\FpvJpApi\Action\Dashboard;
 
-use UMA\FpvJpApi\Action\Apps\Calendar;
-use UMA\FpvJpApi\Action\Apps\Gallery;
+// use UMA\FpvJpApi\Action\Apps\Calendar;
+// use UMA\FpvJpApi\Action\Apps\Gallery;
 
-use UMA\FpvJpApi\Action\Apps\Taskboard\KanbanBoard;
-use UMA\FpvJpApi\Action\Apps\Taskboard\Pipeline;
-use UMA\FpvJpApi\Action\Apps\Taskboard\ProjectsBoard;
+// use UMA\FpvJpApi\Action\Apps\Taskboard\KanbanBoard;
+// use UMA\FpvJpApi\Action\Apps\Taskboard\Pipeline;
+// use UMA\FpvJpApi\Action\Apps\Taskboard\ProjectsBoard;
 
-use UMA\FpvJpApi\Action\Pages\Profile;
-use UMA\FpvJpApi\Action\Pages\EditProfile;
-use UMA\FpvJpApi\Action\Pages\Account;
-use PHPMailer\PHPMailer\PHPMailer;
+// use UMA\FpvJpApi\Action\Pages\Profile;
+// use UMA\FpvJpApi\Action\Pages\EditProfile;
+// use UMA\FpvJpApi\Action\Pages\Account;
+// use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * A ServiceProvider for registering services related to Slim such as request handlers,
@@ -54,32 +54,32 @@ final class Slim implements ServiceProvider
             return new CreateUser($c->get(EntityManager::class), Factory::create());
         });
         
-        //Dashboard
-        $c->set(Dashboard::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new Dashboard($c->get(EntityManager::class), Factory::create());
-        });
+        // //Dashboard
+        // $c->set(Dashboard::class, static function (ContainerInterface $c): RequestHandlerInterface {
+        //     return new Dashboard($c->get(EntityManager::class), Factory::create());
+        // });
 
-        //Apps
-        $c->set(Calendar::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new Calendar($c->get(EntityManager::class), Factory::create(), new PHPMailer(true));
-        });
+        // //Apps
+        // $c->set(Calendar::class, static function (ContainerInterface $c): RequestHandlerInterface {
+        //     return new Calendar($c->get(EntityManager::class), Factory::create(), new PHPMailer(true));
+        // });
 
-        $c->set(Gallery::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new Gallery($c->get(EntityManager::class), Factory::create());
-        });
+        // $c->set(Gallery::class, static function (ContainerInterface $c): RequestHandlerInterface {
+        //     return new Gallery($c->get(EntityManager::class), Factory::create());
+        // });
 
-        //Pages
-        $c->set(Profile::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new Profile($c->get(EntityManager::class), Factory::create());
-        });
+        // //Pages
+        // $c->set(Profile::class, static function (ContainerInterface $c): RequestHandlerInterface {
+        //     return new Profile($c->get(EntityManager::class), Factory::create());
+        // });
 
-        $c->set(EditProfile::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new EditProfile($c->get(EntityManager::class), Factory::create());
-        });
+        // $c->set(EditProfile::class, static function (ContainerInterface $c): RequestHandlerInterface {
+        //     return new EditProfile($c->get(EntityManager::class), Factory::create());
+        // });
 
-        $c->set(Account::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new Account($c->get(EntityManager::class), Factory::create());
-        });
+        // $c->set(Account::class, static function (ContainerInterface $c): RequestHandlerInterface {
+        //     return new Account($c->get(EntityManager::class), Factory::create());
+        // });
 
         $c->set(App::class, static function (ContainerInterface $ci): App {
 
@@ -113,21 +113,21 @@ final class Slim implements ServiceProvider
             $app->get('/api/users', ListUsers::class);
             $app->post('/api/users', CreateUser::class);
 
-            //Dashboard
-            $app->get('/api/dashboard', Dashboard::class);
+            // //Dashboard
+            // $app->get('/api/dashboard', Dashboard::class);
 
-            //Apps
-            $app->get('/api/apps/calendar', Calendar::class)->add(PermissionMiddleware::class);
-            $app->get('/api/apps/gallery', Gallery::class)->add(PermissionMiddleware::class);
+            // //Apps
+            // $app->get('/api/apps/calendar', Calendar::class)->add(PermissionMiddleware::class);
+            // $app->get('/api/apps/gallery', Gallery::class)->add(PermissionMiddleware::class);
 
-            $app->get('/api/apps/taskboard/projects-board', KanbanBoard::class);
-            $app->get('/api/apps/taskboard/kanban-board', Pipeline::class);
-            $app->get('/api/apps/taskboard/pipeline', ProjectsBoard::class);
+            // $app->get('/api/apps/taskboard/projects-board', KanbanBoard::class);
+            // $app->get('/api/apps/taskboard/kanban-board', Pipeline::class);
+            // $app->get('/api/apps/taskboard/pipeline', ProjectsBoard::class);
 
-            //Pages
-            $app->get('/api/pages/profile', Profile::class);
-            $app->get('/api/pages/edit-profile', EditProfile::class);
-            $app->get('/api/pages/account', Account::class);
+            // //Pages
+            // $app->get('/api/pages/profile', Profile::class);
+            // $app->get('/api/pages/edit-profile', EditProfile::class);
+            // $app->get('/api/pages/account', Account::class);
 
             return $app;
         });

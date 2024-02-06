@@ -2,3 +2,4 @@
 .env
 mariadb/data/
 src/doctrine/
+private_html/app.log
