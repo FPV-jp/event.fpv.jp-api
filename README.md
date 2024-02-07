@@ -3,12 +3,33 @@
 エンティティの作成:
 まず、Doctrineで扱いたいデータベースのテーブルに対応するエンティティクラスを作成します。
 
-php vendor/bin/doctrine orm:convert-mapping --from-database annotation ./src
+php vendor/bin/doctrine orm:generate-entities ./src
 
-CRUDの生成:
-次に、Doctrineが提供するコマンドを使用してCRUD操作を生成します。
-
-php vendor/bin/doctrine orm:generate-crud
+  Did you mean one of these?                   
+      orm:clear-cache:metadata                 
+      orm:clear-cache:query                    
+      orm:clear-cache:region:collection        
+      orm:clear-cache:region:entity            
+      orm:clear-cache:region:query             
+      orm:clear-cache:result                   
+      orm:convert-d1-schema                    
+      orm:convert-mapping                      
+      orm:convert:d1-schema                    
+      orm:convert:mapping                      
+      orm:ensure-production-settings           
+      orm:generate-entities                    
+      orm:generate-proxies                     
+      orm:generate-repositories                
+      orm:generate:entities                    
+      orm:generate:proxies                     
+      orm:generate:repositories                
+      orm:info                                 
+      orm:mapping:describe                     
+      orm:run-dql                              
+      orm:schema-tool:create                   
+      orm:schema-tool:drop                     
+      orm:schema-tool:update                   
+      orm:validate-schema 
 
 [![.github/workflows/ci.yml](https://github.com/1ma/Slim-Doctrine-Demo/actions/workflows/ci.yml/badge.svg)](https://github.com/1ma/Slim-Doctrine-Demo/actions)
 
