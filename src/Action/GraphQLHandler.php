@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace UMA\FpvJpApi\Action;
+namespace UMA\FpvJpApi\GraphQLHandler;
 
 use Doctrine\ORM\EntityManager;
 use Nyholm\Psr7\Response;
@@ -11,7 +11,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use UMA\FpvJpApi\Domain\User;
 use function json_encode;
 
-final class ListUsers implements RequestHandlerInterface
+final class GraphQLHandler implements RequestHandlerInterface
 {
     private EntityManager $em;
 

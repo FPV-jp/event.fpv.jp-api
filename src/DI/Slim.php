@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace UMA\FpvJpApi\DI;
 
@@ -25,10 +23,14 @@ use Monolog\Handler\StreamHandler;
 use UMA\FpvJpApi\DI\PermissionMiddleware;
 use UMA\FpvJpApi\Action\CreateUser;
 use UMA\FpvJpApi\Action\ListUsers;
+use UMA\FpvJpApi\Action\GraphQLHandler;
 
+use GraphQL\Utils\BuildSchema;
 
 use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpUnauthorizedException;
+use Slim\Exception\HttpInternalServerErrorException;
+
 // use UMA\FpvJpApi\Action\Dashboard;
 
 // use UMA\FpvJpApi\Action\Apps\Calendar;
@@ -42,6 +44,10 @@ use Slim\Exception\HttpUnauthorizedException;
 // use UMA\FpvJpApi\Action\Pages\EditProfile;
 // use UMA\FpvJpApi\Action\Pages\Account;
 // use PHPMailer\PHPMailer\PHPMailer;
+
+// use GraphQL\GraphQL;
+// use GraphQL\Type\Schema;
+// use GraphQL\Error\FormattedError;
 
 /**
  * A ServiceProvider for registering services related to Slim such as request handlers,
@@ -69,7 +75,7 @@ final class Slim implements ServiceProvider
 
             $app = AppFactory::create(null, $ci);
 
-            // $app->addRoutingMiddleware();
+            $app->addRoutingMiddleware();
 
             // $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
             //     throw new HttpNotFoundException($request);
@@ -104,6 +110,50 @@ final class Slim implements ServiceProvider
 
             $app->get('/api/users', ListUsers::class);
             $app->post('/api/users', CreateUser::class);
+
+            $app->post('/graphql', GraphQLHandler::class);
+
+            // $app->post('/graphql', function (ServerRequestInterface $request, ResponseInterface $response) {
+
+            //     try {
+            //         $schema = BuildSchema::build( /** @lang GraphQL */'
+            //         type Query {
+            //           echo(message: String!): String!
+            //         }
+                    
+            //         type Mutation {
+            //           sum(x: Int!, y: Int!): Int!
+            //         }
+            //         ');
+            //         $rootValue = [
+            //             'echo' => static fn(array $rootValue, array $args): string => $rootValue['prefix'] . $args['message'],
+            //             'sum' => static fn(array $rootValue, array $args): int => $args['x'] + $args['y'],
+            //             'prefix' => 'You said: ',
+            //         ];
+
+            //         $rawInput = file_get_contents('php://input');
+            //         if ($rawInput === false) {
+            //             throw new HttpInternalServerErrorException($request, 'Failed to get php://input');
+            //         }
+
+            //         $input = json_decode($rawInput, true);
+            //         $query = $input['query'];
+            //         $variableValues = $input['variables'] ?? null;
+
+            //         $result = GraphQL::executeQuery($schema, $query, $rootValue, null, $variableValues);
+
+            //     } catch (\Exception $e) {
+            //         $result = [
+            //             'errors' => [
+            //                 FormattedError::createFromException($e)
+            //             ]
+            //         ];
+            //     }
+
+            //     $response->getBody()->write(json_encode($result, JSON_THROW_ON_ERROR));
+            //     return $response->withHeader('Content-Type', 'application/json; charset=UTF-8');
+
+            // });
 
             $logger = new MonologLogger('app_logger', [new StreamHandler(__DIR__ . '/app.log', Logger::DEBUG)]);
             $app->addErrorMiddleware(
