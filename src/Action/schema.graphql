@@ -1,0 +1,17 @@
+type User {
+  id: ID!
+  email: String!
+  bcrypt_hash: String!
+  registered_at: String!
+}
+
+type Query {
+  user(id: ID!): User!
+  allUsers: [User!]!
+}
+
+type Mutation {
+  createUser(email: String!, bcrypt_hash: String!): User!
+  updateUser(id: ID!, email: String, bcrypt_hash: String): User!
+  deleteUser(id: ID!): User!
+}
