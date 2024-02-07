@@ -15,11 +15,11 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\SQLLogger;
 
 /**
- * A ServiceProvider for registering services related to
- * Doctrine in a DI container.
- *
- * If the project had custom repositories (e.g. UserRepository)
- * they could be registered here.
+ * A ServiceProvider for registering services related to Doctrine in a DI container.
+ * If the project had custom repositories (e.g. UserRepository) they could be registered here.
+ * 
+ * Doctrine関連のサービスをDIコンテナに登録するためのServiceProviderです。
+ * プロジェクトにカスタムリポジトリ(UserRepository など)がある場合はここに登録できます。
  */
 final class Doctrine implements ServiceProvider
 {
@@ -29,6 +29,7 @@ final class Doctrine implements ServiceProvider
     public function provide(Container $c): void
     {
         $c->set(EntityManager::class, static function (ContainerInterface $c): EntityManager {
+
             /** @var array $settings */
             $settings = $c->get('settings');
 

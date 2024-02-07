@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace UMA\FpvJpApi\DI;
 
 use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 use Psr\Log\LoggerInterface;
-use Stringable;
 
 class MonologLogger implements LoggerInterface
 {

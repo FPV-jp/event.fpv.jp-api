@@ -71,16 +71,16 @@ final class Mailer implements ServiceProvider
             // $mail->SMTPSecure = 'tls';
             // $mail->Port = 465;
 
-        //     // // Recipients
-        //     // $mail->setFrom('fpv@fpv.jp', 'Your Name');
-        //     // $mail->addAddress('tantaka.tomokazu@gmail.com', 'Recipient Name');
+            // // Recipients
+            // $mail->setFrom('fpv@fpv.jp', 'Your Name');
+            // $mail->addAddress('tantaka.tomokazu@gmail.com', 'Recipient Name');
 
-        //     // // Content
-        //     // $mail->isHTML(true);
-        //     // $mail->Subject = 'Subject of the Email';
-        //     // $mail->Body = 'This is the HTML message body';
+            // // Content
+            // $mail->isHTML(true);
+            // $mail->Subject = 'Subject of the Email';
+            // $mail->Body = 'This is the HTML message body';
 
-        //     // $mail->send();
+            // $mail->send();
         //     // error_log('Message has been sent');
 
             
