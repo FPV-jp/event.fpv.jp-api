@@ -63,8 +63,7 @@ final class User implements JsonSerializable
         return [
             'id' => $this->getId(),
             'email' => $this->getEmail(),
-            'registered_at' => $this->getRegisteredAt()
-                ->format(DateTimeImmutable::ATOM)
+            'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM)
         ];
     }
 }

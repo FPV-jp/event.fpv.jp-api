@@ -59,11 +59,7 @@ final class GraphQLHandler implements RequestHandlerInterface
                     $users = $this->em->getRepository(User::class)->findAll();
                     $userArray = [];
                     foreach ($users as $user) {
-                        $userArray[] = [
-                            'id' => $user->getId(),
-                            'email' => $user->getEmail(),
-                            'registered_at' => $user->getRegisteredAt()->format(DateTimeImmutable::ATOM)
-                        ];
+                        $userArray[] = $user->jsonSerialize();
                     }
                     return $userArray;
                 },
