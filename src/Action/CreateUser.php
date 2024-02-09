@@ -15,16 +15,20 @@ use PHPMailer\PHPMailer\{
     PHPMailer
 };
 
+use Slim\Exception\HttpInternalServerErrorException;
+
 use function json_encode;
 
 final class CreateUser implements RequestHandlerInterface
 {
     private EntityManager $em;
+    private PHPMailer $mail;
     private Generator $faker;
 
-    public function __construct(EntityManager $em, Generator $faker)
+    public function __construct(EntityManager $em, PHPMailer $mail, Generator $faker)
     {
         $this->em = $em;
+        $this->mail = $mail;
         $this->faker = $faker;
     }
 
@@ -35,32 +39,15 @@ final class CreateUser implements RequestHandlerInterface
         $this->em->persist($newRandomUser);
         $this->em->flush();
 
-        $mail = new PHPMailer(true);
-
-        // Server settings
-        // $mail->SMTPDebug = $settings['debug'];
-        $mail->isSMTP();
-        // $mail->Host = $settings['host'];
-        // $mail->SMTPAuth = (bool)$settings['auth'];
-        // $mail->Username = $settings['username'];
-        // $mail->Password = $settings['password'];
-        // $mail->SMTPSecure = $settings['password'];
-        // $mail->Port = (int)$settings['port'];
         try {
-            $mail->Host = 'v2008.coreserver.jp';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'fpv@fpv.jp';
-            $mail->Password = '';
-            // $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            
             // Recipients
-            $mail->setFrom('fpv@fpv.jp', 'FPV Japan');
-            $mail->addAddress('tantaka.tomokazu@gmail.com', 'Recipient Name');
+            $this->mail->addAddress('tantaka.tomokazu@gmail.com', 'Recipient Name');
 
             // Content
-            $mail->isHTML(true);
-            $mail->Subject = 'Subject of the Email';
-            $mail->Body = '<!DOCTYPE html>
+            $this->mail->isHTML(true);
+            $this->mail->Subject = 'Subject of the Email';
+            $this->mail->Body = '<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -85,11 +72,9 @@ final class CreateUser implements RequestHandlerInterface
                 </div>
             </body>
             </html>';
-            $mail->send();
+            $this->mail->send();
         } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-            error_log("Message could not be sent. Mailer Error: {$mail->ErrorInfo}");
-            var_dump($mail->ErrorInfo);
+            throw new HttpInternalServerErrorException($request, $this->mail->ErrorInfo);
         }
 
         $body = Stream::create(json_encode($newRandomUser, JSON_PRETTY_PRINT) . PHP_EOL);

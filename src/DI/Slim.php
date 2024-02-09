@@ -25,6 +25,8 @@ use UMA\FpvJpApi\Action\CreateUser;
 use UMA\FpvJpApi\Action\ListUsers;
 use UMA\FpvJpApi\Action\GraphQLHandler;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 /**
  * A ServiceProvider for registering services related to Slim such as request handlers,
  * routing and the App service itself that wires everything together.
@@ -41,7 +43,7 @@ final class Slim implements ServiceProvider
         });
 
         $c->set(CreateUser::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new CreateUser($c->get(EntityManager::class), Factory::create());
+            return new CreateUser($c->get(EntityManager::class), $c->get(PHPMailer::class), Factory::create());
         });
 
         $c->set(GraphQLHandler::class, static function (ContainerInterface $c): RequestHandlerInterface {
@@ -98,7 +100,7 @@ final class Slim implements ServiceProvider
 
             $app->post('/graphql', GraphQLHandler::class);
 
-            $logger = new MonologLogger('app_logger', [new StreamHandler(__DIR__ . '/app.log', Logger::DEBUG)]);
+            $logger = new MonologLogger('app', [new StreamHandler(__DIR__ . '/app.log', Logger::DEBUG)]);
             $app->addErrorMiddleware(
                 $settings['slim']['displayErrorDetails'],
                 $settings['slim']['logErrors'],

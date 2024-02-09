@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Dotenv\Dotenv;
+
 Dotenv::createImmutable(__DIR__)->load();
 
 const APP_ROOT = __DIR__;
@@ -43,6 +44,24 @@ return [
                 'password' => $_ENV['MARIADB_PASSWORD'],
                 'charset' => $_ENV['MARIADB_CHARSET']
             ]
-        ]
+        ],
+
+        'mai' => [
+            'mailer' => $_ENV['MAIL_MAILER'],
+            'auth' => $_ENV['MAIL_AUTH'],
+            'host' => $_ENV['MAIL_HOST'],
+            'username' => $_ENV['MAIL_USERNAME'],
+            'password' => $_ENV['MAIL_PASSWORD'],
+            'port' => $_ENV['MAIL_PORT'],
+            'encryption' => $_ENV['MAIL_ENCRYPTION'],
+            'sender' => $_ENV['MAIL_SENDER'],
+        ],
+        
+        'cloudinary' => [
+            'cloudname' => $_ENV['CLOUDINARY_CLOUD_NAME'],
+            'apikey' => $_ENV['CLOUDINARY_API_KEY'],
+            'apisecret' => $_ENV['CLOUDINARY_API_SECRET'],
+        ],
+
     ]
 ];

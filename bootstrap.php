@@ -11,8 +11,28 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use UMA\DIC\Container;
+use UMA\FpvJpApi\DI\EchoSQLLogger;
+// use Cloudinary\Configuration\Configuration;
 
 require_once __DIR__ . '/vendor/autoload.php';
+
+// Configuration::instance([
+//     'cloud' => [
+//         'cloud_name' => 'my_cloud_name',
+//         'api_key' => 'my_key',
+//         'api_secret' => 'my_secret'
+//     ],
+//     'url' => [
+//         'secure' => true
+//     ]
+// ]);
+
+// $config = new Configuration();
+// $config->cloud->cloudName = 'my_cloud_name';
+// $config->cloud->apiKey = 'my_key';
+// $config->cloud->apiSecret = 'my_secret';
+// $config->url->secure = true;
+// $cloudinary = new Cloudinary($config);
 
 $container = new Container(require __DIR__ . '/settings.php');
 
@@ -20,29 +40,18 @@ $container->set(EntityManager::class, static function (Container $c): EntityMana
     /** @var array $settings */
     $settings = $c->get('settings');
 
-    // Use the ArrayAdapter or the FilesystemAdapter depending on the value of the 'dev_mode' setting
-    // You can substitute the FilesystemAdapter for any other cache you prefer from the symfony/cache library
-    // $cache = $settings['doctrine']['dev_mode'] ?
-    //     DoctrineProvider::wrap(new ArrayAdapter()) :
-    //     DoctrineProvider::wrap(new FilesystemAdapter(directory: $settings['doctrine']['cache_dir']));
-
-    // $config = Setup::createAttributeMetadataConfiguration(
-    //     $settings['doctrine']['metadata_dirs'],
-    //     $settings['doctrine']['dev_mode'],
-    //     null,
-    //     $cache
-    // );
     $config = ORMSetup::createAttributeMetadataConfiguration(
         $settings['doctrine']['metadata_dirs'],
         $settings['doctrine']['dev_mode'],
         null,
         $settings['doctrine']['dev_mode'] ?
-            new ArrayAdapter() :
-            new FilesystemAdapter(directory: $settings['doctrine']['cache_dir']),
+        new ArrayAdapter() :
+        new FilesystemAdapter(directory: $settings['doctrine']['cache_dir']),
         true
     );
-
-    // return EntityManager::create($settings['doctrine']['connection'], $config);
+    if ($settings['doctrine']['dev_mode']) {
+        $config->setSQLLogger(new EchoSQLLogger());
+    }
     $connection = DriverManager::getConnection($settings['doctrine']['connection'], $config);
     return new EntityManager($connection, $config);
 });

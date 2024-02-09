@@ -10,15 +10,8 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Logging\SQLLogger;
+use UMA\FpvJpApi\DI\EchoSQLLogger;
 
-/**
- * A ServiceProvider for registering services related to Doctrine in a DI container.
- * If the project had custom repositories (e.g. UserRepository) they could be registered here.
- * 
- * Doctrine関連のサービスをDIコンテナに登録するためのServiceProviderです。
- * プロジェクトにカスタムリポジトリ(UserRepository など)がある場合はここに登録できます。
- */
 final class Doctrine implements ServiceProvider
 {
     /**
@@ -36,37 +29,15 @@ final class Doctrine implements ServiceProvider
                 $settings['doctrine']['dev_mode'],
                 null,
                 $settings['doctrine']['dev_mode'] ?
-                    new ArrayAdapter() :
-                    new FilesystemAdapter(directory: $settings['doctrine']['cache_dir']),
+                new ArrayAdapter() :
+                new FilesystemAdapter(directory: $settings['doctrine']['cache_dir']),
                 true
             );
-            if ($settings['doctrine']['dev_mode']){
+            if ($settings['doctrine']['dev_mode']) {
                 $config->setSQLLogger(new EchoSQLLogger());
             }
             $connection = DriverManager::getConnection($settings['doctrine']['connection'], $config);
             return new EntityManager($connection, $config);
         });
-    }
-}
-
-class EchoSQLLogger implements SQLLogger
-{
-    public function startQuery($sql, array $params = null, array $types = null)
-    {
-        error_log($sql);
-
-        if ($params) {
-            error_log("Parameters: " . print_r($params, true));
-        }
-
-        if ($types) {
-            error_log("Types: " . print_r($types, true));
-        }
-
-    }
-
-    public function stopQuery()
-    {
-
     }
 }
