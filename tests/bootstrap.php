@@ -3,7 +3,7 @@
 // bootstrap file for the PHPUnit test suite
 
 use UMA\DIC\Container;
-use UMA\FpvJpApi\DI;
+use FpvJp\DI;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace UMA\Tests\FpvJpApi\Functional;
+namespace Tests\FpvJp\Functional;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;

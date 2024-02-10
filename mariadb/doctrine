@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use UMA\DIC\Container;
-use UMA\FpvJpApi\DI;
+use FpvJp\DI;
 
 /** @var Container $cnt */
 $cnt = require_once __DIR__ . '/../bootstrap.php';

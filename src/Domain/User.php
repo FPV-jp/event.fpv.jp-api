@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace UMA\FpvJpApi\Domain;
+namespace FpvJp\Domain;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping\Column;

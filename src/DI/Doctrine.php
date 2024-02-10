@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace UMA\FpvJpApi\DI;
+namespace FpvJp\DI;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
@@ -10,7 +10,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 use Doctrine\DBAL\DriverManager;
-use UMA\FpvJpApi\DI\EchoSQLLogger;
+use FpvJp\DI\EchoSQLLogger;
 
 final class Doctrine implements ServiceProvider
 {

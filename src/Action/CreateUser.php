@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace UMA\FpvJpApi\Action;
+namespace FpvJp\Action;
 
 use Doctrine\ORM\EntityManager;
 use Faker\Generator;
@@ -9,7 +9,7 @@ use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use UMA\FpvJpApi\Domain\User;
+use FpvJp\Domain\User;
 use PHPMailer\PHPMailer\{
     Exception,
     PHPMailer

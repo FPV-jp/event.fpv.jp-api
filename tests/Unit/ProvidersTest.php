@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace UMA\Tests\FpvJpApi\Unit;
+namespace Tests\FpvJp\Unit;
 
 use Doctrine\ORM\EntityManager;
 use PHPUnit\Framework\TestCase;
 use Slim\App;
 use UMA\DIC\Container;
-use UMA\FpvJpApi\DI;
+use FpvJp\DI;
 
 final class ProvidersTest extends TestCase
 {

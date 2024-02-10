@@ -4,7 +4,7 @@ ini_set('display_errors', "On");
 
 use Slim\App;
 use UMA\DIC\Container;
-use UMA\FpvJpApi\DI;
+use FpvJp\DI;
 
 /** @var Container $cnt */
 $cnt = require_once __DIR__ . '/../bootstrap.php';

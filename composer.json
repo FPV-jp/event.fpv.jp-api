@@ -5,12 +5,12 @@
     "description": "Backend api fpr event.fpv.jp",
     "autoload": {
         "psr-4": {
-            "UMA\\FpvJpApi\\": "src/"
+            "FpvJp\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "UMA\\Tests\\FpvJpApi\\": "tests/"
+            "Tests\\FpvJp\\": "tests/"
         }
     },
     "require": {

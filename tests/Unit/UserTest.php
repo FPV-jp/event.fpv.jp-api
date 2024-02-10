@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace UMA\Tests\FpvJpApi\Unit;
+namespace Tests\FpvJp\Unit;
 
 use PHPUnit\Framework\TestCase;
-use UMA\FpvJpApi\Domain\User;
+use FpvJp\Domain\User;
 use function password_verify;
 
 final class UserTest extends TestCase

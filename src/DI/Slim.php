@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace UMA\FpvJpApi\DI;
+namespace FpvJp\DI;
 
 use Doctrine\ORM\EntityManager;
 use Faker\Factory;
@@ -16,14 +16,14 @@ use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 
 use Psr\Log\LoggerInterface;
-use UMA\FpvJpApi\DI\MonologLogger;
+use FpvJp\DI\MonologLogger;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-use UMA\FpvJpApi\DI\PermissionMiddleware;
-use UMA\FpvJpApi\Action\CreateUser;
-use UMA\FpvJpApi\Action\ListUsers;
-use UMA\FpvJpApi\Action\GraphQLHandler;
+use FpvJp\DI\PermissionMiddleware;
+use FpvJp\Action\CreateUser;
+use FpvJp\Action\ListUsers;
+use FpvJp\Action\GraphQLHandler;
 
 use Cloudinary\Cloudinary;
 use Cloudinary\Configuration\Configuration;
