@@ -91,25 +91,27 @@ curl or similar tools.
 
 ```bash
 $ curl -X POST localhost:8001/api/users
-{
-    "id": 2,
-    "email": "oraynor@oconnell.info",
-    "registered_at": "2022-01-15T23:10:51+01:00"
-}
 
 $ curl -X GET localhost:8001/api/users
-[
-    {
-        "id": 1,
-        "email": "aratke@schroeder.com",
-        "registered_at": "2022-01-15T23:10:50+01:00"
-    },
-    {
-        "id": 2,
-        "email": "oraynor@oconnell.info",
-        "registered_at": "2022-01-15T23:10:51+01:00"
-    }
-]
+
+% curl -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"query": "query { user(id: \"1\") { id email registered_at } }"}' \
+  http://localhost:8001/graphql
+
+% curl -X POST \
+    -d '{"query": "query { allUsers { id email registered_at } }" }' \
+    -H "Content-Type: application/json" \
+    http://localhost:8001/graphql
+
+curl -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"query": "mutation { createUser(email: \"test@example.com\", password: \"password\") { id email registered_at } }"}' \
+  http://localhost:8001/graphql
+
+
+
+
 ```
 
 ## Using the Doctrine Command Line Interface

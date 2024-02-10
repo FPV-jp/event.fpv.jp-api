@@ -13,9 +13,8 @@ use FpvJp\Domain\User;
 
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
-use GraphQL\Error\FormattedError;
-
 use GraphQL\Utils\BuildSchema;
+use GraphQL\Error\FormattedError;
 
 use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpUnauthorizedException;
@@ -38,15 +37,16 @@ final class GraphQLHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $rawInput = file_get_contents('php://input');
+        if ($rawInput === false) {
+            throw new HttpInternalServerErrorException($request, 'Failed to get php://input');
+        }
+        $input = json_decode($rawInput, true);
+
         try {
             $schemaString = file_get_contents(__DIR__ . '/schema.graphql');
             $schema = BuildSchema::build($schemaString);
-            $rawInput = file_get_contents('php://input');
-            if ($rawInput === false) {
-                throw new HttpInternalServerErrorException($request, 'Failed to get php://input');
-            }
 
-            $input = json_decode($rawInput, true);
             $query = $input['query'];
 
             $rootValue = [
@@ -55,15 +55,9 @@ final class GraphQLHandler implements RequestHandlerInterface
                     if (!$user) {
                         throw new HttpNotFoundException($request, 'User not found');
                     }
-                    return $user;
+                    return $user->jsonSerialize();
                 },
                 'allUsers' => function () {
-                    /* 
-                    % curl -X POST \
-                     -d '{"query": "query { allUsers { id email } }" }' \
-                     -H "Content-Type: application/json" \
-                     http://localhost:8001/graphql
-                     */
                     $users = $this->em->getRepository(User::class)->findAll();
                     $userArray = [];
                     foreach ($users as $user) {
@@ -72,25 +66,20 @@ final class GraphQLHandler implements RequestHandlerInterface
                     return $userArray;
                 },
                 'createUser' => function ($rootValue, $args) {
+                    // $newUser = new User($args['email'], $args['password']);
                     $newRandomUser = new User($this->faker->email(), $this->faker->password());
-
                     $this->em->persist($newRandomUser);
                     $this->em->flush();
-                    return $newRandomUser;
+                    return $newRandomUser->jsonSerialize();
                 },
                 'updateUser' => function ($rootValue, $args) use ($request) {
                     $user = $this->em->getRepository(User::class)->find($args['id']);
                     if (!$user) {
                         throw new HttpNotFoundException($request, 'User not found');
                     }
-                    if (isset($args['name'])) {
-                        $user->setName($args['name']);
-                    }
-                    if (isset($args['email'])) {
-                        $user->setEmail($args['email']);
-                    }
+                    $user->updateParameters($args);
                     $this->em->flush();
-                    return $user;
+                    return $user->jsonSerialize();
                 },
                 'deleteUser' => function ($rootValue, $args) use ($request) {
                     $user = $this->em->getRepository(User::class)->find($args['id']);
@@ -99,7 +88,7 @@ final class GraphQLHandler implements RequestHandlerInterface
                     }
                     $this->em->remove($user);
                     $this->em->flush();
-                    return $user;
+                    return $user->jsonSerialize();
                 }
             ];
 

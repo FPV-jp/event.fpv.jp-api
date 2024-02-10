@@ -55,6 +55,19 @@ final class User implements JsonSerializable
         return $this->registeredAt;
     }
 
+    public function updateParameters($args)
+    {
+        // if (isset($args['name'])) {
+        //     $this->name = $args['name'];
+        // }
+        if (isset($args['email'])) {
+            $this->email = $args['email'];
+        }
+        if (isset($args['password'])) {
+            $this->hash = password_hash($args['password'], PASSWORD_BCRYPT);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */

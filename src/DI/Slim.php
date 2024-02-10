@@ -62,15 +62,7 @@ final class Slim implements ServiceProvider
             $app = AppFactory::create(null, $ci);
 
             $app->addRoutingMiddleware();
-            // $container = $app->getContainer();
-            // $container['schema'] = function ($container) {
-            //     $schemaString = file_get_contents(__DIR__ . '/schema.graphql');
-            //     return BuildSchema::build($schemaString);
-            // };
 
-            // $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
-            //     throw new HttpNotFoundException($request);
-            // });
             $app->add(function ($request, $handler) {
                 $response = $handler->handle($request);
                 return $response
@@ -80,23 +72,6 @@ final class Slim implements ServiceProvider
             });
 
             $app->add(new ContentLengthMiddleware());
-
-            // $app->add(function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
-            //     return $handler->handle($request);
-            // });
-
-            // $app->get('/api/hello/{name}', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
-            //     $routeContext = RouteContext::fromRequest($request);
-            //     $basePath = $routeContext->getBasePath();
-            //     $name = $args['name'];
-            //     $params = $request->getServerParams();
-            //     $authorization = $params['HTTP_AUTHORIZATION'] ?? null;
-            //     $response->getBody()->write("Hello, $name $authorization $basePath");
-            //     return $response;
-            //     $jsonResponse = json_encode($admin->assets());
-            //     $response->getBody()->write($jsonResponse);
-            //     return $response->withHeader('Content-Type', 'application/json');
-            // })->add(PermissionMiddleware::class);
 
             $app->options('/{routes:.+}', function ($request, $response, $args) {
                 return $response;
@@ -119,3 +94,30 @@ final class Slim implements ServiceProvider
         });
     }
 }
+
+            // $container = $app->getContainer();
+            // $container['schema'] = function ($container) {
+            //     $schemaString = file_get_contents(__DIR__ . '/schema.graphql');
+            //     return BuildSchema::build($schemaString);
+            // };
+
+            // $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
+            //     throw new HttpNotFoundException($request);
+            // });
+
+            // $app->add(function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
+            //     return $handler->handle($request);
+            // });
+
+            // $app->get('/api/hello/{name}', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
+            //     $routeContext = RouteContext::fromRequest($request);
+            //     $basePath = $routeContext->getBasePath();
+            //     $name = $args['name'];
+            //     $params = $request->getServerParams();
+            //     $authorization = $params['HTTP_AUTHORIZATION'] ?? null;
+            //     $response->getBody()->write("Hello, $name $authorization $basePath");
+            //     return $response;
+            //     $jsonResponse = json_encode($admin->assets());
+            //     $response->getBody()->write($jsonResponse);
+            //     return $response->withHeader('Content-Type', 'application/json');
+            // })->add(PermissionMiddleware::class);

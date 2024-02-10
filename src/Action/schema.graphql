@@ -11,7 +11,7 @@ type Query {
 }
 
 type Mutation {
-  createUser(email: String!, bcrypt_hash: String!): User!
-  updateUser(id: ID!, email: String, bcrypt_hash: String): User!
+  createUser(email: String!, password: String!): User!
+  updateUser(id: ID!, email: String, password: String): User!
   deleteUser(id: ID!): User!
 }
