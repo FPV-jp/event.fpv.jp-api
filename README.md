@@ -104,12 +104,20 @@ $ curl -X GET localhost:8001/api/users
     -H "Content-Type: application/json" \
     http://localhost:8001/graphql
 
-curl -X POST \
+% curl -X POST \
   -H "Content-Type: application/json" \
   --data '{"query": "mutation { createUser(email: \"test@example.com\", password: \"password\") { id email registered_at } }"}' \
   http://localhost:8001/graphql
 
+% curl -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"query": "mutation { updateUser(id: \"1\", email: \"newemail@example.com\") { id email registered_at } }"}' \
+  http://localhost:8001/graphql
 
+% curl -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"query": "mutation { deleteUser(id: \"1\") { id email } }"}' \
+  http://localhost:8001/graphql
 
 
 ```

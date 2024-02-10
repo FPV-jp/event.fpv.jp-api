@@ -49,48 +49,10 @@ final class GraphQLHandler implements RequestHandlerInterface
 
             $query = $input['query'];
 
-            $rootValue = [
-                'user' => function ($rootValue, $args) use ($request) {
-                    $user = $this->em->getRepository(User::class)->find($args['id']);
-                    if (!$user) {
-                        throw new HttpNotFoundException($request, 'User not found');
-                    }
-                    return $user->jsonSerialize();
-                },
-                'allUsers' => function () {
-                    $users = $this->em->getRepository(User::class)->findAll();
-                    $userArray = [];
-                    foreach ($users as $user) {
-                        $userArray[] = $user->jsonSerialize();
-                    }
-                    return $userArray;
-                },
-                'createUser' => function ($rootValue, $args) {
-                    // $newUser = new User($args['email'], $args['password']);
-                    $newRandomUser = new User($this->faker->email(), $this->faker->password());
-                    $this->em->persist($newRandomUser);
-                    $this->em->flush();
-                    return $newRandomUser->jsonSerialize();
-                },
-                'updateUser' => function ($rootValue, $args) use ($request) {
-                    $user = $this->em->getRepository(User::class)->find($args['id']);
-                    if (!$user) {
-                        throw new HttpNotFoundException($request, 'User not found');
-                    }
-                    $user->updateParameters($args);
-                    $this->em->flush();
-                    return $user->jsonSerialize();
-                },
-                'deleteUser' => function ($rootValue, $args) use ($request) {
-                    $user = $this->em->getRepository(User::class)->find($args['id']);
-                    if (!$user) {
-                        throw new HttpNotFoundException($request, 'User not found');
-                    }
-                    $this->em->remove($user);
-                    $this->em->flush();
-                    return $user->jsonSerialize();
-                }
-            ];
+            $additionalRootValueFunctions = include 'UserGraphQL.php';
+
+            $rootValue = [];
+            $rootValue = array_merge($rootValue, $additionalRootValueFunctions);
 
             $contextValue = [
                 'user' => [
