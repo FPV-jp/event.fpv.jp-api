@@ -27,6 +27,12 @@ use UMA\FpvJpApi\Action\GraphQLHandler;
 
 use PHPMailer\PHPMailer\PHPMailer;
 
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
+use Cloudinary\Api\Admin\AdminApi;
+
+
+
 /**
  * A ServiceProvider for registering services related to Slim such as request handlers,
  * routing and the App service itself that wires everything together.
@@ -90,6 +96,19 @@ final class Slim implements ServiceProvider
             //     $response->getBody()->write("Hello, $name $authorization $basePath");
             //     return $response;
             // })->add(PermissionMiddleware::class);
+
+            $app->get('/api/cloudinary', function ($request, $response, $args) {
+                $config = new Configuration();
+                $config->cloud->cloudName = '';
+                $config->cloud->apiKey = '';
+                $config->cloud->apiSecret = '';
+                $config->url->secure = true;
+                $admin = new AdminApi($config);
+                $responseData = $admin->assets();
+                $jsonResponse = json_encode($responseData);
+                $response->getBody()->write($jsonResponse);
+                return $response->withHeader('Content-Type', 'application/json');
+            });
 
             $app->options('/{routes:.+}', function ($request, $response, $args) {
                 return $response;
