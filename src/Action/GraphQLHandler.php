@@ -41,6 +41,14 @@ final class GraphQLHandler implements RequestHandlerInterface
         try {
             $schemaString = file_get_contents(__DIR__ . '/schema.graphql');
             $schema = BuildSchema::build($schemaString);
+            $rawInput = file_get_contents('php://input');
+            if ($rawInput === false) {
+                throw new HttpInternalServerErrorException($request, 'Failed to get php://input');
+            }
+
+            $input = json_decode($rawInput, true);
+            $query = $input['query'];
+
             $rootValue = [
                 'user' => function ($rootValue, $args) use ($request) {
                     $user = $this->em->getRepository(User::class)->find($args['id']);
@@ -94,19 +102,18 @@ final class GraphQLHandler implements RequestHandlerInterface
                     return $user;
                 }
             ];
-        
-            $rawInput = file_get_contents('php://input');
-            if ($rawInput === false) {
-                throw new HttpInternalServerErrorException($request, 'Failed to get php://input');
-            }
-        
-            $input = json_decode($rawInput, true);
-            $query = $input['query'];
+
+            $contextValue = [
+                'user' => [
+                    'id' => 123,
+                    'name' => 'John Doe'
+                ]
+            ];
+
             $variableValues = $input['variables'] ?? null;
 
-            $result = GraphQL::executeQuery($schema, $query, $rootValue, null, $variableValues);
-        
-   
+            $result = GraphQL::executeQuery($schema, $query, $rootValue, $contextValue, $variableValues);
+
         } catch (\Exception $e) {
             error_log($e->getMessage());
             $result = [
