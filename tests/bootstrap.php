@@ -18,6 +18,8 @@ $testingSettings['settings']['doctrine']['connection']['memory'] = true;
 $cnt = new Container($testingSettings);
 
 $cnt->register(new DI\Doctrine());
+$cnt->register(new DI\CloudinaryAdmin());
+$cnt->register(new DI\Mailer());
 $cnt->register(new DI\Slim());
 
 // In this case $cnt is not returned, rather it will live as a global variable

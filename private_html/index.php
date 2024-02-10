@@ -10,6 +10,8 @@ use UMA\FpvJpApi\DI;
 $cnt = require_once __DIR__ . '/../bootstrap.php';
 
 $cnt->register(new DI\Doctrine());
+$cnt->register(new DI\CloudinaryAdmin());
+$cnt->register(new DI\Mailer());
 $cnt->register(new DI\Slim());
 
 /** @var App $app */

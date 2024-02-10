@@ -1,5 +1,6 @@
-
 <?php declare(strict_types=1);
+
+namespace UMA\FpvJpApi\DI;
 
 use Psr\Container\ContainerInterface;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -15,7 +16,7 @@ class Mailer implements ServiceProvider
             /** @var array $settings */
             $settings = $c->get('settings');
 
-            $mailer = new PHPMailer(true); 
+            $mailer = new PHPMailer(true);
             $mailer->isSMTP();
             $mailer->SMTPAuth = $settings['mai']['auth'];
             $mailer->Host = $settings['mai']['host'];

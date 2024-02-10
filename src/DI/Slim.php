@@ -25,13 +25,11 @@ use UMA\FpvJpApi\Action\CreateUser;
 use UMA\FpvJpApi\Action\ListUsers;
 use UMA\FpvJpApi\Action\GraphQLHandler;
 
-use PHPMailer\PHPMailer\PHPMailer;
-
 use Cloudinary\Cloudinary;
 use Cloudinary\Configuration\Configuration;
 use Cloudinary\Api\Admin\AdminApi;
 
-
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * A ServiceProvider for registering services related to Slim such as request handlers,
@@ -45,7 +43,7 @@ final class Slim implements ServiceProvider
     public function provide(Container $c): void
     {
         $c->set(ListUsers::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new ListUsers($c->get(EntityManager::class));
+            return new ListUsers($c->get(EntityManager::class), $c->get(AdminApi::class));
         });
 
         $c->set(CreateUser::class, static function (ContainerInterface $c): RequestHandlerInterface {
@@ -95,20 +93,10 @@ final class Slim implements ServiceProvider
             //     $authorization = $params['HTTP_AUTHORIZATION'] ?? null;
             //     $response->getBody()->write("Hello, $name $authorization $basePath");
             //     return $response;
+            //     $jsonResponse = json_encode($admin->assets());
+            //     $response->getBody()->write($jsonResponse);
+            //     return $response->withHeader('Content-Type', 'application/json');
             // })->add(PermissionMiddleware::class);
-
-            $app->get('/api/cloudinary', function ($request, $response, $args) {
-                $config = new Configuration();
-                $config->cloud->cloudName = '';
-                $config->cloud->apiKey = '';
-                $config->cloud->apiSecret = '';
-                $config->url->secure = true;
-                $admin = new AdminApi($config);
-                $responseData = $admin->assets();
-                $jsonResponse = json_encode($responseData);
-                $response->getBody()->write($jsonResponse);
-                return $response->withHeader('Content-Type', 'application/json');
-            });
 
             $app->options('/{routes:.+}', function ($request, $response, $args) {
                 return $response;
