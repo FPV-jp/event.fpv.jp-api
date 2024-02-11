@@ -25,6 +25,8 @@ use FpvJp\Action\CreateUser;
 use FpvJp\Action\ListUsers;
 use FpvJp\Action\GraphQLHandler;
 
+use FpvJp\GraphQL\SchemaHandler;
+
 use Cloudinary\Cloudinary;
 use Cloudinary\Configuration\Configuration;
 use Cloudinary\Api\Admin\AdminApi;
@@ -50,8 +52,8 @@ final class Slim implements ServiceProvider
             return new CreateUser($c->get(EntityManager::class), $c->get(PHPMailer::class), Factory::create());
         });
 
-        $c->set(GraphQLHandler::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new GraphQLHandler($c->get(EntityManager::class), Factory::create());
+        $c->set(SchemaHandler::class, static function (ContainerInterface $c): RequestHandlerInterface {
+            return new SchemaHandler($c->get(EntityManager::class), Factory::create());
         });
 
         $c->set(App::class, static function (ContainerInterface $ci): App {
@@ -80,7 +82,7 @@ final class Slim implements ServiceProvider
             $app->get('/api/users', ListUsers::class);
             $app->post('/api/users', CreateUser::class);
 
-            $app->post('/graphql', GraphQLHandler::class);
+            $app->post('/graphql', SchemaHandler::class);
 
             $logger = new MonologLogger('app', [new StreamHandler(__DIR__ . '/app.log', Logger::DEBUG)]);
             $app->addErrorMiddleware(

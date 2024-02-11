@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace FpvJp\Action;
+namespace FpvJp\GraphQL;
 
 use Faker\Generator;
 use Doctrine\ORM\EntityManager;
@@ -24,7 +24,7 @@ use DateTimeImmutable;
 
 use function json_encode;
 
-final class GraphQLHandler implements RequestHandlerInterface
+final class SchemaHandler implements RequestHandlerInterface
 {
     private EntityManager $em;
     private Generator $faker;
@@ -49,10 +49,10 @@ final class GraphQLHandler implements RequestHandlerInterface
 
             $query = $input['query'];
 
-            $additionalRootValueFunctions = include 'UserGraphQL.php';
+            $UserFunctions = include 'UserFunctions.php';
 
             $rootValue = [];
-            $rootValue = array_merge($rootValue, $additionalRootValueFunctions);
+            $rootValue = array_merge($rootValue, $UserFunctions);
 
             $contextValue = [
                 'user' => [
