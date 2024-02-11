@@ -60,7 +60,7 @@ Slim-Doctrine-Demo
 ├── public
 │   └── index.php           -- HTTP front controller (requires ../bootstrap.php)
 ├── src
-│   ├── Action              -- Slim request handlers
+│   ├── Rest              -- Slim request handlers
 │   │   ├── CreateUser.php
 │   │   └── ListUsers.php
 │   ├── DI

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace FpvJp\Action;
+namespace FpvJp\Rest;
 
 use Doctrine\ORM\EntityManager;
 use Nyholm\Psr7\Response;

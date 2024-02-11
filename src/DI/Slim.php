@@ -6,29 +6,28 @@ use Doctrine\ORM\EntityManager;
 use Faker\Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+// use Psr\Http\Message\ResponseInterface;
+// use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
-use Slim\Routing\RouteContext;
+// use Slim\Routing\RouteContext;
 use Slim\Middleware\ContentLengthMiddleware;
 use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 
-use Psr\Log\LoggerInterface;
+// use Psr\Log\LoggerInterface;
 use FpvJp\DI\MonologLogger;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 use FpvJp\DI\PermissionMiddleware;
-use FpvJp\Action\CreateUser;
-use FpvJp\Action\ListUsers;
-use FpvJp\Action\GraphQLHandler;
+use FpvJp\Rest\CreateUser;
+use FpvJp\Rest\ListUsers;
 
 use FpvJp\GraphQL\SchemaHandler;
 
-use Cloudinary\Cloudinary;
-use Cloudinary\Configuration\Configuration;
+// use Cloudinary\Cloudinary;
+// use Cloudinary\Configuration\Configuration;
 use Cloudinary\Api\Admin\AdminApi;
 
 use PHPMailer\PHPMailer\PHPMailer;

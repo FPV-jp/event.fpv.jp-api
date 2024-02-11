@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace FpvJp\Action;
+namespace FpvJp\Rest;
 
 use Doctrine\ORM\EntityManager;
 use Faker\Generator;
@@ -40,7 +40,7 @@ final class CreateUser implements RequestHandlerInterface
         $this->em->flush();
 
         try {
-            
+
             // Recipients
             $this->mail->addAddress('tantaka.tomokazu@gmail.com', 'Recipient Name');
 
