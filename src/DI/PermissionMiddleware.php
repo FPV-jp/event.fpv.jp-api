@@ -19,20 +19,15 @@ class PermissionMiddleware
         if ($bearer == null) {
             return new Response(403, ['Content-Type' => 'application/json'], json_encode(['error' => 'Authorization token required']));
         }
-        error_log($bearer);
+
         try {
-            // $this->validateToken($bearer, Token::TYPE_ACCESS_TOKEN);
-            $this->validateToken($bearer, Token::TYPE_ID_TOKEN);
+            // $token = $this->validateToken($bearer, Token::TYPE_ACCESS_TOKEN);
+            $token = $this->validateToken($bearer, Token::TYPE_ID_TOKEN);
+
+            $request = $request->withAttribute('token', $token->toArray());
         } catch (Auth0Exception $e) {
             return new Response(403, ['Content-Type' => 'application/json'], json_encode(['error' => 'Auth0 Token Validation Error: ' . $e->getMessage()]));
         }
-
-        $routeContext = RouteContext::fromRequest($request);
-        $route = $routeContext->getRoute();
-
-        $courseId = $route->getArgument('id');
-
-        // パーミッションロジックを実行...
 
         return $handler->handle($request);
     }

@@ -9,18 +9,12 @@ use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use FpvJp\Domain\User;
 
 use GraphQL\GraphQL;
-use GraphQL\Type\Schema;
 use GraphQL\Utils\BuildSchema;
 use GraphQL\Error\FormattedError;
 
-use Slim\Exception\HttpNotFoundException;
-use Slim\Exception\HttpUnauthorizedException;
 use Slim\Exception\HttpInternalServerErrorException;
-
-use DateTimeImmutable;
 
 use function json_encode;
 
@@ -48,21 +42,13 @@ final class SchemaHandler implements RequestHandlerInterface
             $schema = BuildSchema::build($schemaString);
 
             $query = $input['query'];
-
-            $UserFunctions = include 'UserFunctions.php';
+            $userResolver = include 'UserResolver.php';
 
             $rootValue = [];
-            $rootValue = array_merge($rootValue, $UserFunctions);
+            $rootValue = array_merge($rootValue, $userResolver);
 
-            $contextValue = [
-                'user' => [
-                    'id' => 123,
-                    'name' => 'John Doe'
-                ]
-            ];
-
+            $contextValue = ['token' => $request->getAttribute('token')];
             $variableValues = $input['variables'] ?? null;
-
             $result = GraphQL::executeQuery($schema, $query, $rootValue, $contextValue, $variableValues);
 
         } catch (\Exception $e) {
