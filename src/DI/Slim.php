@@ -81,7 +81,7 @@ final class Slim implements ServiceProvider
             $app->get('/api/users', ListUsers::class);
             $app->post('/api/users', CreateUser::class);
 
-            $app->post('/graphql', SchemaHandler::class);
+            $app->post('/graphql', SchemaHandler::class)->add(PermissionMiddleware::class);
 
             $logger = new MonologLogger('app', [new StreamHandler(__DIR__ . '/app.log', Logger::DEBUG)]);
             $app->addErrorMiddleware(
@@ -97,10 +97,6 @@ final class Slim implements ServiceProvider
 }
 
             // $container = $app->getContainer();
-            // $container['schema'] = function ($container) {
-            //     $schemaString = file_get_contents(__DIR__ . '/schema.graphql');
-            //     return BuildSchema::build($schemaString);
-            // };
 
             // $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
             //     throw new HttpNotFoundException($request);
