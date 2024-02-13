@@ -16,16 +16,25 @@ use GraphQL\Error\FormattedError;
 
 use Slim\Exception\HttpInternalServerErrorException;
 
+use Cloudinary\Api\Admin\AdminApi;
+use PHPMailer\PHPMailer\{
+    Exception,
+    PHPMailer
+};
 use function json_encode;
 
 final class SchemaHandler implements RequestHandlerInterface
 {
     private EntityManager $em;
+    private AdminApi $cloudinary;
+    private PHPMailer $mailer;
     private Generator $faker;
 
-    public function __construct(EntityManager $em, Generator $faker)
+    public function __construct(EntityManager $em, AdminApi $cloudinary, PHPMailer $mailer, Generator $faker)
     {
         $this->em = $em;
+        $this->cloudinary = $cloudinary;
+        $this->mailer = $mailer;
         $this->faker = $faker;
     }
 
@@ -43,9 +52,11 @@ final class SchemaHandler implements RequestHandlerInterface
 
             $query = $input['query'];
             $userResolver = include 'UserResolver.php';
+            $cloudinaryResolver = include 'CloudinaryResolver.php';
 
             $rootValue = [];
             $rootValue = array_merge($rootValue, $userResolver);
+            $rootValue = array_merge($rootValue, $cloudinaryResolver);
 
             $contextValue = ['token' => $request->getAttribute('token')];
             $variableValues = $input['variables'] ?? null;

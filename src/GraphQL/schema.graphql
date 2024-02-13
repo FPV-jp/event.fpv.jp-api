@@ -5,9 +5,31 @@ type User {
   registered_at: String!
 }
 
+type Asset {
+  asset_id: ID!
+  public_id: String!
+  format: String!
+  version: String!
+  resource_type: String!
+  type: String!
+  created_at: String!
+  bytes: String!
+  width: String!
+  height: String!
+  folder: String!
+  url: String!
+  secure_url: String!
+}
+
+type Assets {
+  next_cursor: String!
+  resources: [Asset!]!
+}
+
 type Query {
   user(id: ID!): User!
   allUsers: [User!]!
+  assets: Assets!
 }
 
 type Mutation {

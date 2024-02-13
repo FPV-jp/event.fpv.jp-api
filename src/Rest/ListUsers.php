@@ -28,7 +28,9 @@ final class ListUsers implements RequestHandlerInterface
         /** @var User[] $users */
         $users = $this->em->getRepository(User::class)->findAll();
 
-        // $users = $this->api->assets();
+        // $assets = $this->api->assets()->getArrayCopy();
+        // error_log(print_r($assets['next_cursor'], true));
+        // error_log(print_r($assets['resources'], true));
 
         $body = Stream::create(json_encode($users, JSON_PRETTY_PRINT) . PHP_EOL);
 

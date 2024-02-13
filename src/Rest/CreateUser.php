@@ -72,7 +72,7 @@ final class CreateUser implements RequestHandlerInterface
                 </div>
             </body>
             </html>';
-            $this->mail->send();
+            // $this->mail->send();
         } catch (Exception $e) {
             throw new HttpInternalServerErrorException($request, $this->mail->ErrorInfo);
         }

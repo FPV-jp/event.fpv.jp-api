@@ -52,7 +52,7 @@ final class Slim implements ServiceProvider
         });
 
         $c->set(SchemaHandler::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new SchemaHandler($c->get(EntityManager::class), Factory::create());
+            return new SchemaHandler($c->get(EntityManager::class), $c->get(AdminApi::class), $c->get(PHPMailer::class), Factory::create());
         });
 
         $c->set(App::class, static function (ContainerInterface $ci): App {
