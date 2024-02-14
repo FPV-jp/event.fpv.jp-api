@@ -46,7 +46,7 @@ type Query {
   user(id: ID!): User!
   allUsers: [User!]!
   assets: Assets!
-  echo: S3Contents!
+  listObjectsV2: S3Contents!
 }
 
 type Mutation {

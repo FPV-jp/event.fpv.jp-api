@@ -50,7 +50,7 @@ final class SchemaHandler implements RequestHandlerInterface
     private function getS3Resolver(): array
     {
         return [
-            'echo' => function ($rootValue, $args, $context) {
+            'listObjectsV2' => function ($rootValue, $args, $context) {
                 try {
                     $result = $this->wasabi->listObjectsV2([
                         'Bucket' => 'fpv-japan',
