@@ -5,6 +5,18 @@ type User {
   registered_at: String!
 }
 
+type S3Content {
+  Key: String!
+  LastModified: String!
+  ETag: String!
+  Size: String!
+  StorageClass: String!
+}
+
+type S3Contents {
+  Contents: [S3Content!]!
+}
+
 type Result {
   message: String!
 }
@@ -34,7 +46,7 @@ type Query {
   user(id: ID!): User!
   allUsers: [User!]!
   assets: Assets!
-  echo: Result!
+  echo: S3Contents!
 }
 
 type Mutation {

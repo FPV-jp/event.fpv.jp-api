@@ -2,17 +2,24 @@
 
 namespace FpvJp\GraphQL;
 
-use Faker\Generator;
 use Doctrine\ORM\EntityManager;
+
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
+use Aws\Api\DateTimeResult;
+use Aws\S3\Exception\S3Exception;
+
+use Cloudinary\Api\Admin\AdminApi;
+use PHPMailer\PHPMailer\PHPMailer;
+use Faker\Generator;
+
+use FpvJp\Domain\User;
+
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-
-use FpvJp\GraphQL\Resolver\CloudinaryResolver;
-use FpvJp\GraphQL\Resolver\S3Resolver;
-use FpvJp\GraphQL\Resolver\UserResolver;
 
 use GraphQL\GraphQL;
 use GraphQL\Utils\BuildSchema;
@@ -20,12 +27,6 @@ use GraphQL\Error\FormattedError;
 
 use Slim\Exception\HttpInternalServerErrorException;
 
-use Aws\S3\S3Client;
-use Cloudinary\Api\Admin\AdminApi;
-use PHPMailer\PHPMailer\{
-    Exception,
-    PHPMailer
-};
 use function json_encode;
 
 final class SchemaHandler implements RequestHandlerInterface
@@ -46,33 +47,81 @@ final class SchemaHandler implements RequestHandlerInterface
         $this->faker = $faker;
     }
 
-    private function getRoot(): array {
-        $userResolver = include __DIR__ . '/Resolver/UserResolver.php';
-        $cloudinaryResolver = include __DIR__ . '/Resolver/CloudinaryResolver.php';
-
-        $rootValue = [];
-        $rootValue = array_merge($rootValue, $userResolver);
-        $rootValue = array_merge($rootValue, $cloudinaryResolver);
-
-        // $userResolver = new UserResolver($this->em, $this->faker);
-        // $cloudinaryResolver = new CloudinaryResolver($this->cloudinary, $this->wasabi);
-        // $s3ResolverResolver = new S3Resolver($this->cloudinary, $this->wasabi);
-
-        // return [
-        //     'user' => [$userResolver, 'user'],
-        //     'allUsers' => [$userResolver, 'allUsers'],
-        //     'createUser' => [$userResolver, 'createUser'],
-        //     'updateUser' => [$userResolver, 'updateUser'],
-        //     'deleteUser' => [$userResolver, 'deleteUser'],
-
-        //     'assets' => [$cloudinaryResolver, 'assets'],
-
-        //     'echo' => [$s3ResolverResolver, 'echo'],
-        // ];
-        // error_log(print_r($rootValue['echo'], true));
-        return $rootValue;
+    private function getS3Resolver(): array
+    {
+        return [
+            'echo' => function ($rootValue, $args, $context) {
+                try {
+                    $result = $this->wasabi->listObjectsV2([
+                        'Bucket' => 'fpv-japan',
+                    ]);
+                    foreach ($result['Contents'] as $Content) {
+                        $Content['LastModified'] = $Content['LastModified']->jsonSerialize();
+                    }
+                    return [
+                        'Contents' => $result['Contents'],
+                    ];
+                } catch (S3Exception $e) {
+                    error_log(print_r($e, true));
+                    return [
+                        'Contents' => [],
+                    ];
+                }
+            },
+        ];
     }
 
+    private function getCloudinaryResolver(): array
+    {
+        return [
+            'assets' => function ($rootValue, $args, $context) {
+                $assets = $this->cloudinary->assets()->getArrayCopy();
+                // error_log(print_r($assets['next_cursor'], true));
+                // error_log(print_r($assets['resources'], true));
+                return $assets;
+            },
+        ];
+    }
+
+    private function getUserResolver(): array
+    {
+        return [
+            'user' => function ($rootValue, $args, $context) {
+                $user = $this->em->getRepository(User::class)->find($args['id']);
+                return $user->jsonSerialize();
+            },
+            'allUsers' => function ($rootValue, $args, $context) {
+                $token = $context['token'];
+                error_log(print_r($token, true));
+
+                $users = $this->em->getRepository(User::class)->findAll();
+                $userArray = [];
+                foreach ($users as $user) {
+                    $userArray[] = $user->jsonSerialize();
+                }
+                return $userArray;
+            },
+            'createUser' => function ($rootValue, $args, $context) {
+                // $newUser = new User($args['email'], $args['password']);
+                $newRandomUser = new User($this->faker->email(), $this->faker->password());
+                $this->em->persist($newRandomUser);
+                $this->em->flush();
+                return $newRandomUser->jsonSerialize();
+            },
+            'updateUser' => function ($rootValue, $args, $context) {
+                $user = $this->em->getRepository(User::class)->find($args['id']);
+                $user->updateParameters($args);
+                $this->em->flush();
+                return $user->jsonSerialize();
+            },
+            'deleteUser' => function ($rootValue, $args, $context) {
+                $user = $this->em->getRepository(User::class)->find($args['id']);
+                $this->em->remove($user);
+                $this->em->flush();
+                return $user->jsonSerialize();
+            }
+        ];
+    }
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $rawInput = file_get_contents('php://input');
@@ -81,13 +130,24 @@ final class SchemaHandler implements RequestHandlerInterface
         }
         $input = json_decode($rawInput, true);
         try {
-            $schemaString = file_get_contents(__DIR__ . '/schema.graphql');
-            $schema = BuildSchema::build($schemaString);
-            $query = $input['query'];
-            $rootValue = $this->getRoot();
+            $schema = BuildSchema::build(file_get_contents(__DIR__ . '/schema.graphql'));
+            $source = $input['query'];
+            $rootValue = [];
+            $rootValue = array_merge($rootValue, $this->getUserResolver());
+            $rootValue = array_merge($rootValue, $this->getCloudinaryResolver());
+            $rootValue = array_merge($rootValue, $this->getS3Resolver());
             $contextValue = ['token' => $request->getAttribute('token')];
             $variableValues = $input['variables'] ?? null;
-            $result = GraphQL::executeQuery($schema, $query, $rootValue, $contextValue, $variableValues);
+            $result = GraphQL::executeQuery(
+                $schema,
+                $source,
+                $rootValue,
+                $contextValue,
+                $variableValues,
+                // string $operationName = null,
+                // callable $fieldResolver = null,
+                // array $validationRules = null
+            );
         } catch (\Exception $e) {
             error_log($e->getMessage());
             $result = [
