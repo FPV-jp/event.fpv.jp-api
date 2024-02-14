@@ -46,7 +46,7 @@ return [
             ]
         ],
 
-        'mai' => [
+        'mail' => [
             'mailer' => $_ENV['MAIL_MAILER'],
             'auth' => $_ENV['MAIL_AUTH'],
             'host' => $_ENV['MAIL_HOST'],
@@ -61,6 +61,11 @@ return [
             'cloudname' => $_ENV['CLOUDINARY_CLOUD_NAME'],
             'apikey' => $_ENV['CLOUDINARY_API_KEY'],
             'apisecret' => $_ENV['CLOUDINARY_API_SECRET'],
+        ],
+
+        'wasabi' => [
+            'apikey' => $_ENV['WASABI_API_KEY'],
+            'apisecret' => $_ENV['WASABI_API_SECRET'],
         ],
 
     ]

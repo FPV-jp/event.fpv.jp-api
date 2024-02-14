@@ -15,6 +15,8 @@ use Slim\Middleware\ContentLengthMiddleware;
 use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 
+use Aws\S3\S3Client;
+
 // use Psr\Log\LoggerInterface;
 use FpvJp\DI\MonologLogger;
 use Monolog\Logger;
@@ -52,7 +54,7 @@ final class Slim implements ServiceProvider
         });
 
         $c->set(SchemaHandler::class, static function (ContainerInterface $c): RequestHandlerInterface {
-            return new SchemaHandler($c->get(EntityManager::class), $c->get(AdminApi::class), $c->get(PHPMailer::class), Factory::create());
+            return new SchemaHandler($c->get(EntityManager::class), $c->get(AdminApi::class), $c->get(PHPMailer::class), $c->get(S3Client::class), Factory::create());
         });
 
         $c->set(App::class, static function (ContainerInterface $ci): App {

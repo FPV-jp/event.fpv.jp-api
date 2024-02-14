@@ -16,24 +16,6 @@ use FpvJp\DI\EchoSQLLogger;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-// Configuration::instance([
-//     'cloud' => [
-//         'cloud_name' => 'my_cloud_name',
-//         'api_key' => 'my_key',
-//         'api_secret' => 'my_secret'
-//     ],
-//     'url' => [
-//         'secure' => true
-//     ]
-// ]);
-
-// $config = new Configuration();
-// $config->cloud->cloudName = 'my_cloud_name';
-// $config->cloud->apiKey = 'my_key';
-// $config->cloud->apiSecret = 'my_secret';
-// $config->url->secure = true;
-// $cloudinary = new Cloudinary($config);
-
 $container = new Container(require __DIR__ . '/settings.php');
 
 $container->set(EntityManager::class, static function (Container $c): EntityManager {

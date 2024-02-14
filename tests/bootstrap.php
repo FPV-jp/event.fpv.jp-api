@@ -19,6 +19,7 @@ $cnt = new Container($testingSettings);
 
 $cnt->register(new DI\Doctrine());
 $cnt->register(new DI\CloudinaryAdmin());
+$cnt->register(new DI\Wasabi());
 $cnt->register(new DI\Mailer());
 $cnt->register(new DI\Slim());
 

@@ -16,6 +16,7 @@ use GraphQL\Error\FormattedError;
 
 use Slim\Exception\HttpInternalServerErrorException;
 
+use Aws\S3\S3Client;
 use Cloudinary\Api\Admin\AdminApi;
 use PHPMailer\PHPMailer\{
     Exception,
@@ -28,13 +29,16 @@ final class SchemaHandler implements RequestHandlerInterface
     private EntityManager $em;
     private AdminApi $cloudinary;
     private PHPMailer $mailer;
+    private S3Client $wasabi;
+
     private Generator $faker;
 
-    public function __construct(EntityManager $em, AdminApi $cloudinary, PHPMailer $mailer, Generator $faker)
+    public function __construct(EntityManager $em, AdminApi $cloudinary, PHPMailer $mailer, S3Client $wasabi, Generator $faker)
     {
         $this->em = $em;
         $this->cloudinary = $cloudinary;
         $this->mailer = $mailer;
+        $this->wasabi = $wasabi;
         $this->faker = $faker;
     }
 
