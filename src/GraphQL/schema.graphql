@@ -5,7 +5,7 @@ type User {
   registered_at: String!
 }
 
-type Error {
+type Result {
   message: String!
 }
 
@@ -34,7 +34,7 @@ type Query {
   user(id: ID!): User!
   allUsers: [User!]!
   assets: Assets!
-  echo: Error!
+  echo: Result!
 }
 
 type Mutation {
