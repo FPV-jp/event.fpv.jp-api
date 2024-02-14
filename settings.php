@@ -47,13 +47,9 @@ return [
         ],
 
         'mail' => [
-            'mailer' => $_ENV['MAIL_MAILER'],
-            'auth' => $_ENV['MAIL_AUTH'],
             'host' => $_ENV['MAIL_HOST'],
             'username' => $_ENV['MAIL_USERNAME'],
             'password' => $_ENV['MAIL_PASSWORD'],
-            'port' => $_ENV['MAIL_PORT'],
-            'encryption' => $_ENV['MAIL_ENCRYPTION'],
             'sender' => $_ENV['MAIL_SENDER'],
         ],
         

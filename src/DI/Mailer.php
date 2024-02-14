@@ -18,13 +18,12 @@ class Mailer implements ServiceProvider
 
             $mailer = new PHPMailer(true);
             $mailer->isSMTP();
-            $mailer->SMTPAuth = $settings['mail']['auth'];
+            $mailer->SMTPAuth = true;
             $mailer->Host = $settings['mail']['host'];
             $mailer->Username = $settings['mail']['username'];
             $mailer->Password = $settings['mail']['password'];
-            $mailer->Port = $settings['mail']['port'];
+            $mailer->Port = 587;
             $mailer->setFrom($settings['mail']['username'], $settings['mail']['sender']);
-            // $mailer->SMTPSecure = $settings['mail']['encryption'];
 
             return $mailer;
         });
