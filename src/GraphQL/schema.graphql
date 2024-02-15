@@ -42,7 +42,7 @@ type Assets {
   resources: [Asset!]!
 }
 
-type FormAttribute {
+type FormAttributes {
   action: String!
   method: String!
   enctype: String!
@@ -58,7 +58,7 @@ type FormInputs {
 }
 
 type PostObject {
-  formAttribute: FormAttribute!
+  formAttributes: FormAttributes!
   formInputs: FormInputs!
 }
 
@@ -71,7 +71,7 @@ type Query {
   allUsers: [User!]!
   assets: Assets!
   listObjectsV2: S3Contents!
-  postObjectV4(names: [String!]!): PostObject!
+  postObjectV4(names: [String!]!): PostObjects!
 }
 
 type Mutation {

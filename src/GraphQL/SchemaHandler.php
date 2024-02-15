@@ -102,14 +102,15 @@ final class SchemaHandler implements RequestHandlerInterface
                             'formInputs' => $postObject->getFormInputs()
                         ];
                     }
-    
+
                     error_log(print_r([
                         'Objects' => $postObjectArray,
                     ], true));
-
+                    
                     return [
                         'Objects' => $postObjectArray,
                     ];
+
                 } catch (S3Exception $e) {
                     error_log(print_r($e, true));
                     return [
