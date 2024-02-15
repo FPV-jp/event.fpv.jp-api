@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 use Aws\Api\DateTimeResult;
+use Aws\S3\PostObjectV4;
 use Aws\S3\Exception\S3Exception;
 
 use Cloudinary\Api\Admin\AdminApi;
@@ -65,6 +66,54 @@ final class SchemaHandler implements RequestHandlerInterface
                     error_log(print_r($e, true));
                     return [
                         'Contents' => [],
+                    ];
+                }
+            },
+            'postObjectV4' => function ($rootValue, $args, $context) {
+                error_log(print_r($args, true));
+                $token = $context['token'];
+                error_log(print_r($token, true));
+                $bucket = 'fpv-japan';
+                $starts_with = $token['name'];
+                $this->wasabi->listBuckets();
+                $postObjectArray = [];
+                try {
+                    foreach ($args['names'] as $name) {
+                        $formInputs = [
+                            'acl' => 'public-read',
+                            'key' => $starts_with . '/' . $name
+                        ];
+                        $options = [
+                            ['acl' => 'public-read'],
+                            ['bucket' => $bucket],
+                            ['starts-with', '$key', $starts_with],
+                        ];
+                        // $expires = '+2 hours';
+                        $expires = '+5 minutes';
+                        $postObject = new PostObjectV4(
+                            $this->wasabi,
+                            $bucket,
+                            $formInputs,
+                            $options,
+                            $expires
+                        );
+                        $postObjectArray[] = [
+                            'formAttributes' => $postObject->getFormAttributes(),
+                            'formInputs' => $postObject->getFormInputs()
+                        ];
+                    }
+    
+                    error_log(print_r([
+                        'Objects' => $postObjectArray,
+                    ], true));
+
+                    return [
+                        'Objects' => $postObjectArray,
+                    ];
+                } catch (S3Exception $e) {
+                    error_log(print_r($e, true));
+                    return [
+                        'Objects' => [],
                     ];
                 }
             },
