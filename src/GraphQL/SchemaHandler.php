@@ -56,9 +56,9 @@ final class SchemaHandler implements RequestHandlerInterface
                     $result = $this->wasabi->listObjectsV2([
                         'Bucket' => 'fpv-japan',
                     ]);
-                    foreach ($result['Contents'] as $Content) {
-                        $Content['LastModified'] = $Content['LastModified']->jsonSerialize();
-                    }
+                    error_log(print_r([
+                        'Contents' => $result['Contents'],
+                    ], true));
                     return [
                         'Contents' => $result['Contents'],
                     ];
@@ -72,7 +72,6 @@ final class SchemaHandler implements RequestHandlerInterface
             'postObjectV4' => function ($rootValue, $args, $context) {
                 error_log(print_r($args, true));
                 $token = $context['token'];
-                error_log(print_r($token, true));
                 $bucket = 'fpv-japan';
                 $starts_with = $token['name'];
                 $this->wasabi->listBuckets();
@@ -97,16 +96,12 @@ final class SchemaHandler implements RequestHandlerInterface
                             $options,
                             $expires
                         );
-                        $postObjectArray[] =$postObject->getFormAttributes();
-                        // $postObjectArray[] = [
-                        //     'formAttributes' => $postObject->getFormAttributes(),
-                        //     'formInputs' => $postObject->getFormInputs()
-                        // ];
+                        $postObjectArray[] = array_merge($postObject->getFormAttributes(), $postObject->getFormInputs());
                     }
 
-                    error_log(print_r([
-                        'Objects' => $postObjectArray,
-                    ], true));
+                    // error_log(print_r([
+                    //     'Objects' => $postObjectArray,
+                    // ], true));
 
                     return [
                         'Objects' => $postObjectArray,

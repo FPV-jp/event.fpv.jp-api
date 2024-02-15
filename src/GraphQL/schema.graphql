@@ -42,13 +42,10 @@ type Assets {
   resources: [Asset!]!
 }
 
-type FormAttributes {
+type PostObject {
   action: String!
   method: String!
   enctype: String!
-}
-
-type FormInputs {
   acl: String!
   key: String!
   xAmzCredential: String!
@@ -57,9 +54,8 @@ type FormInputs {
   policy: String!
 }
 
-type PostObject {
-  formAttributes: FormAttributes!
-  formInputs: FormInputs!
+type PostObjects {
+  Objects: [PostObject!]!
 }
 
 type Query {
@@ -67,7 +63,7 @@ type Query {
   allUsers: [User!]!
   assets: Assets!
   listObjectsV2: S3Contents!
-  postObjectV4(names: [String!]!): [FormAttributes!]!
+  postObjectV4(names: [String!]!): PostObjects!
 }
 
 type Mutation {
