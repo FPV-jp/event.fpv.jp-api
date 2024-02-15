@@ -97,16 +97,17 @@ final class SchemaHandler implements RequestHandlerInterface
                             $options,
                             $expires
                         );
-                        $postObjectArray[] = [
-                            'formAttributes' => $postObject->getFormAttributes(),
-                            'formInputs' => $postObject->getFormInputs()
-                        ];
+                        $postObjectArray[] =$postObject->getFormAttributes();
+                        // $postObjectArray[] = [
+                        //     'formAttributes' => $postObject->getFormAttributes(),
+                        //     'formInputs' => $postObject->getFormInputs()
+                        // ];
                     }
 
                     error_log(print_r([
                         'Objects' => $postObjectArray,
                     ], true));
-                    
+
                     return [
                         'Objects' => $postObjectArray,
                     ];

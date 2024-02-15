@@ -62,16 +62,12 @@ type PostObject {
   formInputs: FormInputs!
 }
 
-type PostObjects {
-  Objects: [PostObject!]
-}
-
 type Query {
   user(id: ID!): User!
   allUsers: [User!]!
   assets: Assets!
   listObjectsV2: S3Contents!
-  postObjectV4(names: [String!]!): PostObjects!
+  postObjectV4(names: [String!]!): [FormAttributes!]!
 }
 
 type Mutation {
