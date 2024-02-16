@@ -22,7 +22,7 @@ use FpvJp\Logger\MonologLogger;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-use FpvJp\DI\PermissionMiddleware;
+use FpvJp\Middleware\PermissionMiddleware;
 use FpvJp\Rest\CreateUser;
 use FpvJp\Rest\ListUsers;
 
