@@ -39,7 +39,7 @@
     "scripts": {
         "serve": [
             "@composer install",
-            "./mariadb/doctrine orm:schema:update --force",
+            "./mariadb/doctrine orm:schema:update --force --complete",
             "php -S localhost:8001 -t private_html private_html/index.php"
         ],
         "test": [

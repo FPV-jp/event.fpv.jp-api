@@ -43,9 +43,15 @@ final class SchemaHandler implements RequestHandlerInterface
     private function buildSchema()
     {
         $schemaFiles = [
-            __DIR__ . '/User/schema.graphql',
             __DIR__ . '/Cloudinary/schema.graphql',
             __DIR__ . '/Wasabi/schema.graphql',
+
+            __DIR__ . '/User/schema.graphql',
+            __DIR__ . '/EventSchedule/schema.graphql',
+            __DIR__ . '/FlightPoint/schema.graphql',
+            __DIR__ . '/MediaLibrary/schema.graphql',
+            __DIR__ . '/OpenChat/schema.graphql',
+
             __DIR__ . '/schema.graphql',
         ];
 
@@ -59,14 +65,20 @@ final class SchemaHandler implements RequestHandlerInterface
     private function rootValue()
     {
         $resolverFiles = [
-            __DIR__ . '/User/resolver.php',
             __DIR__ . '/Cloudinary/resolver.php',
             __DIR__ . '/Wasabi/resolver.php',
+
+            __DIR__ . '/User/resolver.php',
+            __DIR__ . '/EventSchedule/resolver.php',
+            __DIR__ . '/FlightPoint/resolver.php',
+            __DIR__ . '/MediaLibrary/resolver.php',
+            __DIR__ . '/OpenChat/resolver.php',
+
         ];
 
         $rootValue = [];
         foreach ($resolverFiles as $file) {
-            $rootValue = array_merge($rootValue, require_once  $file);
+            $rootValue = array_merge($rootValue, require_once $file);
         }
         return $rootValue;
     }

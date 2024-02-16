@@ -1,0 +1,7 @@
+type MediaLibrary {
+  id: ID!
+  email: String!
+  bcrypt_hash: String!
+  registered_at: String!
+}
+
