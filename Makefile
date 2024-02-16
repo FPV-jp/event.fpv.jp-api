@@ -2,6 +2,9 @@ init:
 	cat .env.example > .env
 	composer install
 
+run:
+	composer serve
+
 up:
 	docker compose up --build
 
