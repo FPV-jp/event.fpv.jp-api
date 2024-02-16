@@ -47,164 +47,61 @@ final class SchemaHandler implements RequestHandlerInterface
         $this->wasabi = $wasabi;
         $this->faker = $faker;
     }
-
-    private function getS3Resolver(): array
+    private function buildSchema()
     {
-        return [
-            'listObjectsV2' => function ($rootValue, $args, $context) {
-                try {
-                    $result = $this->wasabi->listObjectsV2([
-                        'Bucket' => 'fpv-japan',
-                    ]);
-                    // error_log(print_r([
-                    //     'Contents' => $result['Contents'],
-                    // ], true));
-                    return [
-                        'Contents' => $result['Contents'],
-                    ];
-                } catch (S3Exception $e) {
-                    error_log(print_r($e, true));
-                    return [
-                        'Contents' => [],
-                    ];
-                }
-            },
-            'createPresignedRequest' => function ($rootValue, $args, $context) {
-                $token = $context['token'];
-                $bucket = 'fpv-japan';
-                $user = $token['name'];
-                $presignedUrls = [];
-                try {
-                    foreach ($args['fileNames'] as $fileName) {
-                        $cmd = $this->wasabi->getCommand($args['command'], [
-                            'Bucket' => $bucket,
-                            'Key' => $user . '/' . $fileName,
-                            'ACL' => 'public-read',
-                        ]);
-                        $request = $this->wasabi->createPresignedRequest($cmd, $args['expires']);
-                        $presignedUrls[] = [
-                            'fileName' => $fileName,
-                            'presignedUrl' => (string) $request->getUri(),
-                        ];
-                    }
-                    return $presignedUrls;
-                } catch (S3Exception $e) {
-                    error_log(print_r($e, true));
-                    return $presignedUrls;
-                }
-            },
-            'postObjectV4' => function ($rootValue, $args, $context) {
-                // error_log(print_r($args, true));
-                $token = $context['token'];
-                $bucket = 'fpv-japan';
-                $starts_with = $token['name'];
-                $this->wasabi->listBuckets();
-                $postObjectArray = [];
-                try {
-                    foreach ($args['names'] as $name) {
-                        $formInputs = [
-                            'acl' => 'public-read',
-                            'key' => $starts_with . '/' . $name
-                        ];
-                        $options = [
-                            ['acl' => 'public-read'],
-                            ['bucket' => $bucket],
-                            ['starts-with', '$key', $starts_with],
-                        ];
-                        // $expires = '+2 hours';
-                        $expires = '+5 minutes';
-                        $postObject = new PostObjectV4(
-                            $this->wasabi,
-                            $bucket,
-                            $formInputs,
-                            $options,
-                            $expires
-                        );
-                        $postObjectArray[] = array_merge($postObject->getFormAttributes(), $postObject->getFormInputs());
-                    }
-                    // error_log(print_r([
-                    //     'Objects' => $postObjectArray,
-                    // ], true));
-                    return [
-                        'Objects' => $postObjectArray,
-                    ];
-                } catch (S3Exception $e) {
-                    error_log(print_r($e, true));
-                    return [
-                        'Objects' => [],
-                    ];
-                }
-            },
+        $schemaFiles = [
+            __DIR__ . '/User/schema.graphql',
+            __DIR__ . '/Cloudinary/schema.graphql',
+            __DIR__ . '/Wasabi/schema.graphql',
+            __DIR__ . '/schema.graphql',
         ];
+
+        $schemaString = '';
+        foreach ($schemaFiles as $file) {
+            $schemaString .= file_get_contents($file) . PHP_EOL;
+        }
+        return BuildSchema::build($schemaString);
     }
 
-    private function getCloudinaryResolver(): array
+    private function rootValue()
     {
-        return [
-            'assets' => function ($rootValue, $args, $context) {
-                $assets = $this->cloudinary->assets()->getArrayCopy();
-                // error_log(print_r($assets['next_cursor'], true));
-                // error_log(print_r($assets['resources'], true));
-                return $assets;
-            },
+        $resolverFiles = [
+            __DIR__ . '/User/resolver.php',
+            __DIR__ . '/Cloudinary/resolver.php',
+            __DIR__ . '/Wasabi/resolver.php',
         ];
+
+        $rootValue = [];
+        foreach ($resolverFiles as $file) {
+            $rootValue = array_merge($rootValue, require_once  $file);
+        }
+        return $rootValue;
     }
 
-    private function getUserResolver(): array
-    {
-        return [
-            'user' => function ($rootValue, $args, $context) {
-                $user = $this->em->getRepository(User::class)->find($args['id']);
-                return $user->jsonSerialize();
-            },
-            'allUsers' => function ($rootValue, $args, $context) {
-                $token = $context['token'];
-                error_log(print_r($token, true));
-
-                $users = $this->em->getRepository(User::class)->findAll();
-                $userArray = [];
-                foreach ($users as $user) {
-                    $userArray[] = $user->jsonSerialize();
-                }
-                return $userArray;
-            },
-            'createUser' => function ($rootValue, $args, $context) {
-                // $newUser = new User($args['email'], $args['password']);
-                $newRandomUser = new User($this->faker->email(), $this->faker->password());
-                $this->em->persist($newRandomUser);
-                $this->em->flush();
-                return $newRandomUser->jsonSerialize();
-            },
-            'updateUser' => function ($rootValue, $args, $context) {
-                $user = $this->em->getRepository(User::class)->find($args['id']);
-                $user->updateParameters($args);
-                $this->em->flush();
-                return $user->jsonSerialize();
-            },
-            'deleteUser' => function ($rootValue, $args, $context) {
-                $user = $this->em->getRepository(User::class)->find($args['id']);
-                $this->em->remove($user);
-                $this->em->flush();
-                return $user->jsonSerialize();
-            }
-        ];
-    }
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $rawInput = file_get_contents('php://input');
+
         if ($rawInput === false) {
+
             throw new HttpInternalServerErrorException($request, 'Failed to get php://input');
+
         }
-        $input = json_decode($rawInput, true);
+
         try {
-            $schema = BuildSchema::build(file_get_contents(__DIR__ . '/schema.graphql'));
+
+            $input = json_decode($rawInput, true);
+
+            $schema = $this->buildSchema();
+
             $source = $input['query'];
-            $rootValue = [];
-            $rootValue = array_merge($rootValue, $this->getUserResolver());
-            $rootValue = array_merge($rootValue, $this->getCloudinaryResolver());
-            $rootValue = array_merge($rootValue, $this->getS3Resolver());
+
+            $rootValue = $this->rootValue();
+
             $contextValue = ['token' => $request->getAttribute('token')];
+
             $variableValues = $input['variables'] ?? null;
+
             $result = GraphQL::executeQuery(
                 $schema,
                 $source,
@@ -215,15 +112,14 @@ final class SchemaHandler implements RequestHandlerInterface
                 // callable $fieldResolver = null,
                 // array $validationRules = null
             );
+
         } catch (\Exception $e) {
             error_log($e->getMessage());
-            $result = [
-                'errors' => [
-                    FormattedError::createFromException($e)
-                ]
-            ];
+            $result = FormattedError::createFromException($e);
         }
+
         $body = Stream::create(json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL);
+
         return new Response(200, ['Content-Type' => 'application/json'], $body);
     }
 }

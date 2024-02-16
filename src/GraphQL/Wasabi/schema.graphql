@@ -1,0 +1,36 @@
+type S3Content {
+  Key: String!
+  LastModified: String!
+  ETag: String!
+  Size: String!
+  StorageClass: String!
+}
+
+type S3Contents {
+  Contents: [S3Content!]!
+}
+
+type Result {
+  message: String!
+}
+
+type PostObject {
+  action: String!
+  method: String!
+  enctype: String!
+  acl: String!
+  key: String!
+  xAmzCredential: String!
+  xAmzAlgorithm: String!
+  xAmzDate: String!
+  policy: String!
+}
+
+type PostObjects {
+  Objects: [PostObject!]!
+}
+
+type PresignedUrl {
+  fileName: String!
+  presignedUrl: String!
+}
