@@ -5,16 +5,9 @@ namespace FpvJp\GraphQL;
 use Doctrine\ORM\EntityManager;
 
 use Aws\S3\S3Client;
-use Aws\Exception\AwsException;
-use Aws\Api\DateTimeResult;
-use Aws\S3\PostObjectV4;
-use Aws\S3\Exception\S3Exception;
-
 use Cloudinary\Api\Admin\AdminApi;
 use PHPMailer\PHPMailer\PHPMailer;
 use Faker\Generator;
-
-use FpvJp\Domain\User;
 
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\Stream;
