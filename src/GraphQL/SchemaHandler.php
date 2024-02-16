@@ -56,9 +56,9 @@ final class SchemaHandler implements RequestHandlerInterface
                     $result = $this->wasabi->listObjectsV2([
                         'Bucket' => 'fpv-japan',
                     ]);
-                    error_log(print_r([
-                        'Contents' => $result['Contents'],
-                    ], true));
+                    // error_log(print_r([
+                    //     'Contents' => $result['Contents'],
+                    // ], true));
                     return [
                         'Contents' => $result['Contents'],
                     ];
@@ -69,8 +69,32 @@ final class SchemaHandler implements RequestHandlerInterface
                     ];
                 }
             },
+            'createPresignedRequest' => function ($rootValue, $args, $context) {
+                $token = $context['token'];
+                $bucket = 'fpv-japan';
+                $user = $token['name'];
+                $presignedUrls = [];
+                try {
+                    foreach ($args['fileNames'] as $fileName) {
+                        $cmd = $this->wasabi->getCommand($args['command'], [
+                            'Bucket' => $bucket,
+                            'Key' => $user . '/' . $fileName,
+                            'ACL' => 'public-read',
+                        ]);
+                        $request = $this->wasabi->createPresignedRequest($cmd, $args['expires']);
+                        $presignedUrls[] = [
+                            'fileName' => $fileName,
+                            'presignedUrl' => (string) $request->getUri(),
+                        ];
+                    }
+                    return $presignedUrls;
+                } catch (S3Exception $e) {
+                    error_log(print_r($e, true));
+                    return $presignedUrls;
+                }
+            },
             'postObjectV4' => function ($rootValue, $args, $context) {
-                error_log(print_r($args, true));
+                // error_log(print_r($args, true));
                 $token = $context['token'];
                 $bucket = 'fpv-japan';
                 $starts_with = $token['name'];
@@ -98,15 +122,12 @@ final class SchemaHandler implements RequestHandlerInterface
                         );
                         $postObjectArray[] = array_merge($postObject->getFormAttributes(), $postObject->getFormInputs());
                     }
-
                     // error_log(print_r([
                     //     'Objects' => $postObjectArray,
                     // ], true));
-
                     return [
                         'Objects' => $postObjectArray,
                     ];
-
                 } catch (S3Exception $e) {
                     error_log(print_r($e, true));
                     return [

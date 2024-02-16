@@ -58,12 +58,18 @@ type PostObjects {
   Objects: [PostObject!]!
 }
 
+type PresignedUrl {
+  fileName: String!
+  presignedUrl: String!
+}
+
 type Query {
   user(id: ID!): User!
   allUsers: [User!]!
   assets: Assets!
   listObjectsV2: S3Contents!
   postObjectV4(names: [String!]!): PostObjects!
+  createPresignedRequest(fileNames: [String!]!, command: String!, expires: String!): [PresignedUrl!]!
 }
 
 type Mutation {
