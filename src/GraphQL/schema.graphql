@@ -1,3 +1,8 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
 type Query {
   user(id: ID!): User!
   allUsers: [User!]!
@@ -21,7 +26,7 @@ type Query {
 }
 
 type Mutation {
-  createUser(email: String!, password: String!): User!
+  createUser(user: CreateUserInput): User!
   updateUser(id: ID!, email: String, password: String): User!
   deleteUser(id: ID!): User!
 
@@ -41,3 +46,19 @@ type Mutation {
   updateMediaLibrary(id: ID!, email: String, password: String): MediaLibrary!
   deleteMediaLibrary(id: ID!): MediaLibrary!
 }
+
+# interface Character {
+#   id: ID!
+#   name: String!
+#   friends: [Character]
+#   appearsIn: [Episode]!
+# }
+
+# type Human implements Character {
+#   id: ID!
+#   name: String!
+#   friends: [Character]
+#   appearsIn: [Episode]!
+#   starships: [Starship]
+#   totalCredits: Int
+# }

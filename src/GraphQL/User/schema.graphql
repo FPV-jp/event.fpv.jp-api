@@ -5,3 +5,8 @@ type User {
   registered_at: String!
 }
 
+input CreateUserInput {
+  email: String!
+  password: String!
+}
+

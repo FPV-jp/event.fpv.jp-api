@@ -8,8 +8,8 @@ return [
         return $user->jsonSerialize();
     },
     'allUsers' => function ($rootValue, $args, $context) {
-        $token = $context['token'];
-        error_log(print_r($token, true));
+        // $token = $context['token'];
+        // error_log(print_r($token, true));
 
         $users = $this->em->getRepository(User::class)->findAll();
         $userArray = [];
@@ -19,11 +19,12 @@ return [
         return $userArray;
     },
     'createUser' => function ($rootValue, $args, $context) {
-        // $newUser = new User($args['email'], $args['password']);
-        $newRandomUser = new User($this->faker->email(), $this->faker->password());
-        $this->em->persist($newRandomUser);
+        $newUser = new User($args['user']['email'], $args['user']['password']);
+        $newUser = new User($this->faker->email(), $this->faker->password());
+        // error_log(print_r($newUser, true));
+        $this->em->persist($newUser);
         $this->em->flush();
-        return $newRandomUser->jsonSerialize();
+        return $newUser->jsonSerialize();
     },
     'updateUser' => function ($rootValue, $args, $context) {
         $user = $this->em->getRepository(User::class)->find($args['id']);
