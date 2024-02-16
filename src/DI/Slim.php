@@ -18,7 +18,7 @@ use UMA\DIC\ServiceProvider;
 use Aws\S3\S3Client;
 
 // use Psr\Log\LoggerInterface;
-use FpvJp\DI\MonologLogger;
+use FpvJp\Logger\MonologLogger;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 

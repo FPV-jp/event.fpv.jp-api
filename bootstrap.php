@@ -11,7 +11,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use UMA\DIC\Container;
-use FpvJp\DI\EchoSQLLogger;
+use FpvJp\Logger\EchoSQLLogger;
 // use Cloudinary\Configuration\Configuration;
 
 require_once __DIR__ . '/vendor/autoload.php';

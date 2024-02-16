@@ -10,7 +10,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 use Doctrine\DBAL\DriverManager;
-use FpvJp\DI\EchoSQLLogger;
+use FpvJp\Logger\EchoSQLLogger;
 
 final class Doctrine implements ServiceProvider
 {

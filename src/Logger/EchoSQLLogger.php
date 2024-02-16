@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace FpvJp\DI;
+namespace FpvJp\Logger;
 
 use Doctrine\DBAL\Logging\SQLLogger;
 
