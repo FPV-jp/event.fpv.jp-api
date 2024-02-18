@@ -8,30 +8,40 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\DBAL\Types\Types;
 use JsonSerializable;
 use function password_hash;
 
 // The User class demonstrates how to annotate a simple PHP class to act as a Doctrine entity.
+// https://www.doctrine-project.org/projects/doctrine-orm/en/3.0/reference/basic-mapping.html
 
 #[Entity, Table(name: 'users')]
 final class User implements JsonSerializable
 {
-    #[Id, Column(type: 'integer'), GeneratedValue(strategy: 'AUTO')]
+    #[Id, Column(type: Types::INTEGER), GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', unique: true, nullable: false)]
+    #[Column(name: 'latitude', type: Types::FLOAT, unique: true, nullable: false)]
+    private float $latitude;
+
+    #[Column(name: 'longitude', type: Types::FLOAT, unique: true, nullable: false)]
+    private float $longitude;
+
+    #[Column(name: 'user', type: Types::STRING, unique: true, nullable: false)]
+    private string $user;
+
+    #[Column(name: 'email', type: Types::STRING, unique: true, nullable: false)]
     private string $email;
 
-    #[Column(name: 'bcrypt_hash', type: 'string', length: 60, nullable: false)]
-    private string $hash;
-
-    #[Column(name: 'registered_at', type: 'datetimetz_immutable', nullable: false)]
+    #[Column(name: 'registered_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $registeredAt;
 
-    public function __construct(string $email, string $password)
+    public function __construct(float $latitude, float $longitude, string $email, string $user)
     {
+        $this->latitude = $latitude;
+        $this->longitude = $longitude;
+        $this->user = $user;
         $this->email = $email;
-        $this->hash = password_hash($password, PASSWORD_BCRYPT);
         $this->registeredAt = new DateTimeImmutable('now');
     }
 
@@ -39,15 +49,23 @@ final class User implements JsonSerializable
     {
         return $this->id;
     }
+    public function getLatitude(): float
+    {
+        return $this->latitude;
+    }
+    public function getLongitude(): float
+    {
+        return $this->longitude;
+    }
+
+    public function getUser(): string
+    {
+        return $this->user;
+    }
 
     public function getEmail(): string
     {
         return $this->email;
-    }
-
-    public function getHash(): string
-    {
-        return $this->hash;
     }
 
     public function getRegisteredAt(): DateTimeImmutable
@@ -63,9 +81,7 @@ final class User implements JsonSerializable
         if (isset($args['email'])) {
             $this->email = $args['email'];
         }
-        if (isset($args['password'])) {
-            $this->hash = password_hash($args['password'], PASSWORD_BCRYPT);
-        }
+
     }
 
     /**

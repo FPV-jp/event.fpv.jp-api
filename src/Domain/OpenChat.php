@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\DBAL\Types\Types;
 use JsonSerializable;
 use function password_hash;
 
@@ -16,16 +17,16 @@ use function password_hash;
 #[Entity, Table(name: 'open_chats')]
 final class OpenChat implements JsonSerializable
 {
-    #[Id, Column(type: 'integer'), GeneratedValue(strategy: 'AUTO')]
+    #[Id, Column(type: Types::INTEGER), GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(type: 'string', unique: true, nullable: false)]
+    #[Column(name: 'email', type: Types::STRING, unique: true, nullable: false)]
     private string $email;
 
-    #[Column(name: 'bcrypt_hash', type: 'string', length: 60, nullable: false)]
+    #[Column(name: 'bcrypt_hash', type: Types::STRING, length: 60, nullable: false)]
     private string $hash;
-
-    #[Column(name: 'registered_at', type: 'datetimetz_immutable', nullable: false)]
+    
+    #[Column(name: 'registered_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $registeredAt;
 
     public function __construct(string $email, string $password)
