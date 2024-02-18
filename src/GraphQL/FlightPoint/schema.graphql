@@ -5,3 +5,13 @@ type FlightPoint {
   registered_at: String!
 }
 
+input CreateFlightPointInput {
+  email: String!
+  password: String!
+}
+
+input UpdateFlightPointInput {
+  id: ID!
+  email: String
+  password: String
+}

@@ -27,15 +27,15 @@ type Query {
 
 type Mutation {
   createUser(user: CreateUserInput): User!
-  updateUser(id: ID!, email: String, password: String): User!
+  updateUser(user: UpdateUserInput): User!
   deleteUser(id: ID!): User!
 
   createEventSchedule(email: String!, password: String!): EventSchedule!
   updateEventSchedule(id: ID!, email: String, password: String): EventSchedule!
   deleteEventSchedule(id: ID!): EventSchedule!
 
-  createFlightPoint(email: String!, password: String!): FlightPoint!
-  updateFlightPoint(id: ID!, email: String, password: String): FlightPoint!
+  createFlightPoint(flightpoint: CreateFlightPointInput): FlightPoint!
+  updateFlightPoint(flightpoint: UpdateFlightPointInput): FlightPoint!
   deleteFlightPoint(id: ID!): FlightPoint!
 
   createOpenChat(email: String!, password: String!): OpenChat!

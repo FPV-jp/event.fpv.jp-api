@@ -10,3 +10,8 @@ input CreateUserInput {
   password: String!
 }
 
+input UpdateUserInput {
+  id: ID!
+  email: String
+  password: String
+}
