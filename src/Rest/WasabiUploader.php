@@ -30,14 +30,18 @@ final class WasabiUploader implements RequestHandlerInterface
         $uploadedFiles = $request->getUploadedFiles();
         $uploadedFile = $uploadedFiles['file'];
 
-        try {
-            $result = $this->wasabi->putObject([
-                'Bucket' => $requestData['bucket'],
-                'Key' => $requestData['user_email'] . '/' . bin2hex(random_bytes(8)),
-                'Body' => $uploadedFile->getStream(),
-            ]);
-        } catch (S3Exception $e) {
-            error_log(print_r($e->getMessage(), true));
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+
+            try {
+                $result = $this->wasabi->putObject([
+                    'Bucket' => $requestData['bucket'],
+                    'Key' => $requestData['user_email'] . '/' . bin2hex(random_bytes(8)),
+                    'Body' => $uploadedFile->getStream(),
+                ]);
+            } catch (S3Exception $e) {
+                error_log(print_r($e->getMessage(), true));
+            }
+
         }
 
         $body = Stream::create(json_encode($result->toArray(), JSON_PRETTY_PRINT) . PHP_EOL);

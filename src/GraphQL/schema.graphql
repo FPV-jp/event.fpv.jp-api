@@ -10,7 +10,7 @@ type Query {
   eventschedule(id: ID!): EventSchedule!
   allEventSchedules: [EventSchedule!]!
 
-  flightpoint(id: ID!): FlightPoint!
+  flightPoint(id: ID!): FlightPoint!
   allFlightPoints: [FlightPoint!]!
 
   openchat(id: ID!): OpenChat!
@@ -34,7 +34,7 @@ type Mutation {
   updateEventSchedule(id: ID!, email: String, password: String): EventSchedule!
   deleteEventSchedule(id: ID!): EventSchedule!
 
-  createFlightPoint(flightPoint: CreateFlightPointInput): FlightPoint!
+  createFlightPoint(createFlightPointInput: CreateFlightPointInput): FlightPoint!
   updateFlightPoint(flightPoint: UpdateFlightPointInput): FlightPoint!
   deleteFlightPoint(id: ID!): FlightPoint!
 

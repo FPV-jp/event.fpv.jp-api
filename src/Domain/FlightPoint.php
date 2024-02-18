@@ -32,13 +32,13 @@ final class FlightPoint implements JsonSerializable
     #[Column(name: 'registered_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $registeredAt;
 
-    public function __construct(float $latitude, float $longitude, string $title, string $create_user, string $marker_image)
+    public function __construct(array $flightPoint)
     {
-        $this->latitude = $latitude;
-        $this->longitude = $longitude;
-        $this->title = $title;
-        $this->create_user = $create_user;
-        $this->marker_image = $marker_image;
+        $this->latitude = $flightPoint['latitude'];
+        $this->longitude = $flightPoint['longitude'];
+        $this->title = $flightPoint['title'];
+        $this->create_user = $flightPoint['create_user'];
+        $this->marker_image = $flightPoint['marker_image'];
         $this->registeredAt = new DateTimeImmutable('now');
     }
 
@@ -61,6 +61,10 @@ final class FlightPoint implements JsonSerializable
     public function getCreateUser(): string
     {
         return $this->create_user;
+    }
+    public function getMarkerImage(): string
+    {
+        return $this->marker_image;
     }
     public function getRegisteredAt(): DateTimeImmutable
     {
@@ -89,6 +93,7 @@ final class FlightPoint implements JsonSerializable
             'longitude' => $this->getLongitude(),
             'title' => $this->getTitle(),
             'create_user' => $this->getCreateUser(),
+            'marker_image' => $this->getMarkerImage(),
             'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM)
         ];
     }
