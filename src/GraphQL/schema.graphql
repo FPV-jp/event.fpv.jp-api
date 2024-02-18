@@ -35,7 +35,7 @@ type Mutation {
   deleteEventSchedule(id: ID!): EventSchedule!
 
   createFlightPoint(createFlightPointInput: CreateFlightPointInput): FlightPoint!
-  updateFlightPoint(flightPoint: UpdateFlightPointInput): FlightPoint!
+  updateFlightPoint(updateFlightPointInput: UpdateFlightPointInput): FlightPoint!
   deleteFlightPoint(id: ID!): FlightPoint!
 
   createOpenChat(email: String!, password: String!): OpenChat!

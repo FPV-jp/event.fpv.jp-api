@@ -1,3 +1,11 @@
+input CreateFlightPointInput {
+  latitude: Float!
+  longitude: Float!
+  title: String!
+  create_user: String!
+  marker_image: String!
+}
+
 type FlightPoint {
   id: ID!
   latitude: Float!
@@ -6,14 +14,6 @@ type FlightPoint {
   create_user: String!
   marker_image: String!
   registered_at: String!
-}
-
-input CreateFlightPointInput {
-  latitude: Float!
-  longitude: Float!
-  title: String!
-  create_user: String!
-  marker_image: String!
 }
 
 input UpdateFlightPointInput {
