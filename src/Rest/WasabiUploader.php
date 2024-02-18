@@ -25,22 +25,22 @@ final class WasabiUploader implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $requestData = $request->getParsedBody();
+
         $uploadedFiles = $request->getUploadedFiles();
-        $uploadedFile = $uploadedFiles['markerImage'];
+        $uploadedFile = $uploadedFiles['file'];
 
         try {
-
             $result = $this->wasabi->putObject([
-                'Bucket' => 'fpv-japan-public',
-                'Key' => bin2hex(random_bytes(8)),
+                'Bucket' => $requestData['bucket'],
+                'Key' => $requestData['user_email'] . '/' . bin2hex(random_bytes(8)),
                 'Body' => $uploadedFile->getStream(),
             ]);
-
         } catch (S3Exception $e) {
             error_log(print_r($e->getMessage(), true));
         }
 
-        $body = Stream::create(json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL);
+        $body = Stream::create(json_encode($result->toArray(), JSON_PRETTY_PRINT) . PHP_EOL);
 
         return new Response(201, ['Content-Type' => 'application/json'], $body);
     }

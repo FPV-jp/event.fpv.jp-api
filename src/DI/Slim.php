@@ -123,7 +123,6 @@ final class Slim implements ServiceProvider
 //     $params = $request->getServerParams();
 //     $authorization = $params['HTTP_AUTHORIZATION'] ?? null;
 //     $response->getBody()->write("Hello, $name $authorization $basePath");
-//     return $response;
 //     $jsonResponse = json_encode($admin->assets());
 //     $response->getBody()->write($jsonResponse);
 //     return $response->withHeader('Content-Type', 'application/json');

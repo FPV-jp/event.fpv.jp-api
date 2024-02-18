@@ -24,8 +24,8 @@ return [
             $flightPoint['latitude'],
             $flightPoint['longitude'],
             $flightPoint['title'],
-            $flightPoint['createUser'],
-            $flightPoint['markerImage']
+            $flightPoint['create_user'],
+            $flightPoint['marker_image']
         );
         $this->em->persist($newFlightPoint);
         $this->em->flush();
