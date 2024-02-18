@@ -19,28 +19,26 @@ final class FlightPoint implements JsonSerializable
 {
     #[Id, Column(type: Types::INTEGER), GeneratedValue(strategy: 'AUTO')]
     private int $id;
-
-    #[Column(name: 'latitude', type: Types::FLOAT, unique: true, nullable: false)]
+    #[Column(name: 'latitude', type: Types::FLOAT, unique: false, nullable: false)]
     private float $latitude;
-
-    #[Column(name: 'longitude', type: Types::FLOAT, unique: true, nullable: false)]
+    #[Column(name: 'longitude', type: Types::FLOAT, unique: false, nullable: false)]
     private float $longitude;
-
-    #[Column(name: 'user', type: Types::STRING, unique: true, nullable: false)]
-    private string $user;
-
-    #[Column(name: 'email', type: Types::STRING, unique: true, nullable: false)]
-    private string $email;
-
+    #[Column(name: 'title', type: Types::STRING, unique: false, nullable: false)]
+    private string $title;
+    #[Column(name: 'create_user', type: Types::STRING, unique: false, nullable: false)]
+    private string $create_user;
+    #[Column(name: 'marker_image', type: Types::STRING, unique: false, nullable: false)]
+    private string $marker_image;
     #[Column(name: 'registered_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $registeredAt;
 
-    public function __construct(float $latitude, float $longitude, string $email, string $user)
+    public function __construct(float $latitude, float $longitude, string $title, string $create_user, string $marker_image)
     {
         $this->latitude = $latitude;
         $this->longitude = $longitude;
-        $this->user = $user;
-        $this->email = $email;
+        $this->title = $title;
+        $this->create_user = $create_user;
+        $this->marker_image = $marker_image;
         $this->registeredAt = new DateTimeImmutable('now');
     }
 
@@ -56,17 +54,14 @@ final class FlightPoint implements JsonSerializable
     {
         return $this->longitude;
     }
-
-    public function getUser(): string
+    public function getTitle(): string
     {
-        return $this->user;
+        return $this->title;
     }
-
-    public function getEmail(): string
+    public function getCreateUser(): string
     {
-        return $this->email;
+        return $this->create_user;
     }
-
     public function getRegisteredAt(): DateTimeImmutable
     {
         return $this->registeredAt;
@@ -90,7 +85,10 @@ final class FlightPoint implements JsonSerializable
     {
         return [
             'id' => $this->getId(),
-            'email' => $this->getEmail(),
+            'latitude' => $this->getLatitude(),
+            'longitude' => $this->getLongitude(),
+            'title' => $this->getTitle(),
+            'create_user' => $this->getCreateUser(),
             'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM)
         ];
     }

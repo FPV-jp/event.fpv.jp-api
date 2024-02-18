@@ -1,17 +1,26 @@
 type FlightPoint {
   id: ID!
-  email: String!
-  bcrypt_hash: String!
+  latitude: Float!
+  longitude: Float!
+  title: String!
+  create_user: String!
+  marker_image: String!
   registered_at: String!
 }
 
 input CreateFlightPointInput {
-  email: String!
-  password: String!
+  latitude: Float!
+  longitude: Float!
+  title: String!
+  createUser: String!
+  markerImage: String!
 }
 
 input UpdateFlightPointInput {
   id: ID!
-  email: String
-  password: String
+  latitude: Float
+  longitude: Float
+  title: String
+  createUser: String
+  markerImage: String
 }

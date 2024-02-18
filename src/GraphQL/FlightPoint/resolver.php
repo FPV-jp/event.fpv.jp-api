@@ -19,11 +19,17 @@ return [
         return $flightpointArray;
     },
     'createFlightPoint' => function ($rootValue, $args, $context) {
-        // $newFlightPoint = new FlightPoint($args['email'], $args['password']);
-        $newRandomFlightPoint = new FlightPoint($this->faker->email(), $this->faker->password());
-        $this->em->persist($newRandomFlightPoint);
+        $flightPoint = $args['flightPoint'];
+        $newFlightPoint = new FlightPoint(
+            $flightPoint['latitude'],
+            $flightPoint['longitude'],
+            $flightPoint['title'],
+            $flightPoint['createUser'],
+            $flightPoint['markerImage']
+        );
+        $this->em->persist($newFlightPoint);
         $this->em->flush();
-        return $newRandomFlightPoint->jsonSerialize();
+        return $newFlightPoint->jsonSerialize();
     },
     'updateFlightPoint' => function ($rootValue, $args, $context) {
         $flightpoint = $this->em->getRepository(FlightPoint::class)->find($args['id']);

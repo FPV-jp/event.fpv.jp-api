@@ -23,8 +23,10 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 use FpvJp\Middleware\PermissionMiddleware;
+
 use FpvJp\Rest\CreateUser;
 use FpvJp\Rest\ListUsers;
+use FpvJp\Rest\WasabiUploader;
 
 use FpvJp\GraphQL\SchemaHandler;
 
@@ -51,6 +53,10 @@ final class Slim implements ServiceProvider
 
         $c->set(CreateUser::class, static function (ContainerInterface $c): RequestHandlerInterface {
             return new CreateUser($c->get(EntityManager::class), $c->get(PHPMailer::class), Factory::create());
+        });
+
+        $c->set(WasabiUploader::class, static function (ContainerInterface $c): RequestHandlerInterface {
+            return new WasabiUploader($c->get(S3Client::class));
         });
 
         $c->set(SchemaHandler::class, static function (ContainerInterface $c): RequestHandlerInterface {
@@ -80,6 +86,8 @@ final class Slim implements ServiceProvider
                 return $response;
             });
 
+            $app->post('/api/wasabi', WasabiUploader::class);
+
             $app->get('/api/users', ListUsers::class);
             $app->post('/api/users', CreateUser::class);
 
@@ -98,25 +106,25 @@ final class Slim implements ServiceProvider
     }
 }
 
-            // $container = $app->getContainer();
+// $container = $app->getContainer();
 
-            // $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
-            //     throw new HttpNotFoundException($request);
-            // });
+// $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
+//     throw new HttpNotFoundException($request);
+// });
 
-            // $app->add(function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
-            //     return $handler->handle($request);
-            // });
+// $app->add(function (ServerRequestInterface $request, RequestHandlerInterface $handler) {
+//     return $handler->handle($request);
+// });
 
-            // $app->get('/api/hello/{name}', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
-            //     $routeContext = RouteContext::fromRequest($request);
-            //     $basePath = $routeContext->getBasePath();
-            //     $name = $args['name'];
-            //     $params = $request->getServerParams();
-            //     $authorization = $params['HTTP_AUTHORIZATION'] ?? null;
-            //     $response->getBody()->write("Hello, $name $authorization $basePath");
-            //     return $response;
-            //     $jsonResponse = json_encode($admin->assets());
-            //     $response->getBody()->write($jsonResponse);
-            //     return $response->withHeader('Content-Type', 'application/json');
-            // })->add(PermissionMiddleware::class);
+// $app->get('/api/hello/{name}', function (ServerRequestInterface $request, ResponseInterface $response, $args) {
+//     $routeContext = RouteContext::fromRequest($request);
+//     $basePath = $routeContext->getBasePath();
+//     $name = $args['name'];
+//     $params = $request->getServerParams();
+//     $authorization = $params['HTTP_AUTHORIZATION'] ?? null;
+//     $response->getBody()->write("Hello, $name $authorization $basePath");
+//     return $response;
+//     $jsonResponse = json_encode($admin->assets());
+//     $response->getBody()->write($jsonResponse);
+//     return $response->withHeader('Content-Type', 'application/json');
+// })->add(PermissionMiddleware::class);
