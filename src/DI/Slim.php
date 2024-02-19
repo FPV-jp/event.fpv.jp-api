@@ -86,7 +86,7 @@ final class Slim implements ServiceProvider
                 return $response;
             });
 
-            $app->post('/api/wasabi', WasabiUploader::class);
+            $app->post('/api/wasabi', WasabiUploader::class)->add(PermissionMiddleware::class);
 
             $app->get('/api/users', ListUsers::class);
             $app->post('/api/users', CreateUser::class);

@@ -8,8 +8,6 @@ return [
         return $flightPoint->jsonSerialize();
     },
     'allFlightPoints' => function ($rootValue, $args, $context) {
-        // $token = $context['token'];
-
         $flightPoints = $this->em->getRepository(FlightPoint::class)->findAll();
         $flightPointArray = [];
         foreach ($flightPoints as $flightPoint) {
@@ -18,7 +16,7 @@ return [
         return $flightPointArray;
     },
     'createFlightPoint' => function ($rootValue, $args, $context) {
-        $newFlightPoint = new FlightPoint($args['createFlightPointInput']);
+        $newFlightPoint = new FlightPoint($args['createFlightPointInput'], $context['token']);
         $this->em->persist($newFlightPoint);
         $this->em->flush();
         return $newFlightPoint->jsonSerialize();

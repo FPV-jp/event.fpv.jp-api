@@ -2,7 +2,6 @@ input CreateFlightPointInput {
   latitude: Float!
   longitude: Float!
   title: String!
-  create_user: String!
   marker_image: String!
 }
 

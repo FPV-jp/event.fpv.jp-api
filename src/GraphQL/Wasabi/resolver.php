@@ -7,19 +7,25 @@ use Aws\S3\Exception\S3Exception;
 
 return [
     'listObjectsV2' => function ($rootValue, $args, $context) {
-        $token = $context['token'];
+
+        error_log(print_r([
+            'Bucket' => $args['Name'],
+            'Prefix' => $context['token']['email'],
+            'Marker' => $args['Marker'],
+            'MaxKeys' => $args['MaxKeys'],
+        ], true));
         try {
             $result = $this->wasabi->listObjectsV2(
                 [
                     'Bucket' => $args['Name'],
-                    'Prefix' => $token['email'],
+                    'Prefix' => $context['token']['email'],
                     'Marker' => $args['Marker'],
-                    "MaxKeys" => $args['MaxKeys'],
+                    'MaxKeys' => $args['MaxKeys'],
                 ]
             );
             return $result->toArray();
         } catch (S3Exception $e) {
-            error_log(print_r($e, true));
+            // error_log(print_r($e, true));
             return [
                 [],
             ];
@@ -29,7 +35,7 @@ return [
     // public function listObjects(string $bucketName, $start = 0, $max = 1000, array $args = [])
     // {
     //     Prefix
-    //     $parameters = array_merge(['Bucket' => $bucketName, 'Marker' => $start, "MaxKeys" => $max], $args);
+    //     $parameters = array_merge(['Bucket' => $bucketName, 'Marker' => $start, 'MaxKeys' => $max], $args);
     //     try {
     //         $objects = $this->wasabi->listObjectsV2($parameters);
     //         if ($this->verbose) {

@@ -27,6 +27,10 @@ final class WasabiUploader implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+
+        // error_log(print_r($request->getAttribute('token'), true));
+        $token = $request->getAttribute('token');
+
         $requestData = $request->getParsedBody();
 
         $uploadedFiles = $request->getUploadedFiles();
@@ -36,11 +40,11 @@ final class WasabiUploader implements RequestHandlerInterface
             try {
                 $result = $this->wasabi->putObject([
                     'Bucket' => $requestData['bucket'],
-                    'Key' => $requestData['user_email'] . '/' . bin2hex(random_bytes(8)),
+                    'Key' => $token['email'] . '/' . bin2hex(random_bytes(8)),
                     'Body' => $uploadedFile->getStream(),
                 ]);
             } catch (S3Exception $e) {
-                error_log(print_r($e->getMessage(), true));
+                // error_log(print_r($e->getMessage(), true));
             }
 
             // $source = fopen('/path/to/large/file.zip', 'rb');
