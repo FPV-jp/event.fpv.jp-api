@@ -1,3 +1,8 @@
+php_value upload_max_filesize 1G
+php_value post_max_size 1G
+php_value memory_limit 2048M
+php_value max_execution_time 300
+
 RewriteEngine On
 RewriteBase /
 RewriteRule ^api/.*$ index.php [L]
