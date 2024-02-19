@@ -19,10 +19,14 @@ type Query {
   medialibrary(id: ID!): MediaLibrary!
   allMediaLibraryies: [MediaLibrary!]!
 
+  # Cloudinary
   assets: CloudinaryAssets!
-  listObjectsV2: S3Contents!
+
+  # Wasabi
+  listObjectsV2(Name: String!, Marker: Int!, MaxKeys: Int!): S3Contents!
   postObjectV4(names: [String!]!): PostObjects!
   createPresignedRequest(fileNames: [String!]!, command: String!, expires: String!): [PresignedUrl!]!
+
 }
 
 type Mutation {

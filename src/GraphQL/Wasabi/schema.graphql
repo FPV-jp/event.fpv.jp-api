@@ -8,10 +8,10 @@ type S3Content {
 
 type S3Contents {
   Contents: [S3Content!]!
-}
-
-type Result {
-  message: String!
+  Name: String!
+  Prefix: String!
+  MaxKeys: Int!
+  KeyCount: Int!
 }
 
 type PostObject {

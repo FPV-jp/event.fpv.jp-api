@@ -2,6 +2,8 @@
 
 namespace FpvJp\Rest;
 
+use Aws\Exception\MultipartUploadException;
+use Aws\S3\MultipartUploader;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 
@@ -31,7 +33,6 @@ final class WasabiUploader implements RequestHandlerInterface
         $uploadedFile = $uploadedFiles['file'];
 
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-
             try {
                 $result = $this->wasabi->putObject([
                     'Bucket' => $requestData['bucket'],
@@ -42,6 +43,22 @@ final class WasabiUploader implements RequestHandlerInterface
                 error_log(print_r($e->getMessage(), true));
             }
 
+            // $source = fopen('/path/to/large/file.zip', 'rb');
+            // $uploader = new MultipartUploader($this->wasabi, $source, [
+            //     'bucket' => $requestData['bucket'],
+            //     'key' => $requestData['user_email'] . '/' . bin2hex(random_bytes(8)),
+            // ]);
+            // do {
+            //     try {
+            //         $result = $uploader->upload();
+            //     } catch (MultipartUploadException $e) {
+            //         rewind($source);
+            //         $uploader = new MultipartUploader($this->wasabi, $source, [
+            //             'state' => $e->getState(),
+            //         ]);
+            //     }
+            // } while (!isset($result));
+            // fclose($source);
         }
 
         $body = Stream::create(json_encode($result->toArray(), JSON_PRETTY_PRINT) . PHP_EOL);

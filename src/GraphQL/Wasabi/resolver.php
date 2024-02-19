@@ -7,23 +7,43 @@ use Aws\S3\Exception\S3Exception;
 
 return [
     'listObjectsV2' => function ($rootValue, $args, $context) {
+        $token = $context['token'];
         try {
-            $result = $this->wasabi->listObjectsV2([
-                'Bucket' => 'fpv-japan',
-            ]);
-            // error_log(print_r([
-            //     'Contents' => $result['Contents'],
-            // ], true));
-            return [
-                'Contents' => $result['Contents'],
-            ];
+            $result = $this->wasabi->listObjectsV2(
+                [
+                    'Bucket' => $args['Name'],
+                    'Prefix' => $token['email'],
+                    'Marker' => $args['Marker'],
+                    "MaxKeys" => $args['MaxKeys'],
+                ]
+            );
+            return $result->toArray();
         } catch (S3Exception $e) {
             error_log(print_r($e, true));
             return [
-                'Contents' => [],
+                [],
             ];
         }
     },
+
+    // public function listObjects(string $bucketName, $start = 0, $max = 1000, array $args = [])
+    // {
+    //     Prefix
+    //     $parameters = array_merge(['Bucket' => $bucketName, 'Marker' => $start, "MaxKeys" => $max], $args);
+    //     try {
+    //         $objects = $this->wasabi->listObjectsV2($parameters);
+    //         if ($this->verbose) {
+    //             echo "Retrieved the list of objects from: $bucketName.\n";
+    //         }
+    //     } catch (AwsException $exception) {
+    //         if ($this->verbose) {
+    //             echo "Failed to retrieve the objects from $bucketName with error: {$exception->getMessage()}\n";
+    //             echo "Please fix error with list objects before continuing.";
+    //         }
+    //         throw $exception;
+    //     }
+    //     return $objects;
+    // }
     'createPresignedRequest' => function ($rootValue, $args, $context) {
         $token = $context['token'];
         $bucket = 'fpv-japan';

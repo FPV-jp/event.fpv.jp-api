@@ -8,8 +8,7 @@ return [
         return $flightPoint->jsonSerialize();
     },
     'allFlightPoints' => function ($rootValue, $args, $context) {
-        $token = $context['token'];
-        error_log(print_r($token, true));
+        // $token = $context['token'];
 
         $flightPoints = $this->em->getRepository(FlightPoint::class)->findAll();
         $flightPointArray = [];
