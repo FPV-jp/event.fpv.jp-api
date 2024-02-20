@@ -29,6 +29,7 @@ final class WasabiUploader implements RequestHandlerInterface
     {
 
         $token = $request->getAttribute('token');
+        $fileKey = $token['email'] . '/' . bin2hex(random_bytes(8));
 
         $requestData = $request->getParsedBody();
 
@@ -39,9 +40,10 @@ final class WasabiUploader implements RequestHandlerInterface
             try {
                 $result = $this->wasabi->putObject([
                     'Bucket' => $requestData['bucket'],
-                    'Key' => $token['email'] . '/' . bin2hex(random_bytes(8)),
+                    'Key' => $fileKey,
                     'Body' => $uploadedFile->getStream(),
                 ]);
+                error_log(print_r($result->toArray(), true));
             } catch (S3Exception $e) {
                 error_log(print_r($e, true));
             }
@@ -64,7 +66,7 @@ final class WasabiUploader implements RequestHandlerInterface
             // fclose($source);
         }
 
-        $body = Stream::create(json_encode($result->toArray(), JSON_PRETTY_PRINT) . PHP_EOL);
+        $body = Stream::create(json_encode(['fileKey' => $fileKey], JSON_PRETTY_PRINT) . PHP_EOL);
 
         return new Response(201, ['Content-Type' => 'application/json'], $body);
     }
