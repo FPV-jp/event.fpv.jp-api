@@ -67,7 +67,6 @@ final class WasabiUploader implements RequestHandlerInterface
         }
 
         $body = Stream::create(json_encode(['fileKey' => $fileKey], JSON_PRETTY_PRINT) . PHP_EOL);
-
         return new Response(201, ['Content-Type' => 'application/json'], $body);
     }
 }

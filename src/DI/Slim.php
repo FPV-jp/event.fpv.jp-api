@@ -27,6 +27,7 @@ use FpvJp\Middleware\PermissionMiddleware;
 use FpvJp\Rest\CreateUser;
 use FpvJp\Rest\ListUsers;
 use FpvJp\Rest\WasabiUploader;
+use FpvJp\Rest\WasabiDownloader;
 
 use FpvJp\GraphQL\SchemaHandler;
 
@@ -57,6 +58,10 @@ final class Slim implements ServiceProvider
 
         $c->set(WasabiUploader::class, static function (ContainerInterface $c): RequestHandlerInterface {
             return new WasabiUploader($c->get(S3Client::class));
+        });
+
+        $c->set(WasabiDownloader::class, static function (ContainerInterface $c): RequestHandlerInterface {
+            return new WasabiDownloader($c->get(S3Client::class));
         });
 
         $c->set(SchemaHandler::class, static function (ContainerInterface $c): RequestHandlerInterface {
@@ -90,6 +95,7 @@ final class Slim implements ServiceProvider
                 return $response;
             });
             $app->post('/api/wasabi', WasabiUploader::class)->add(PermissionMiddleware::class);
+            $app->post('/api/wasabi2', WasabiDownloader::class)->add(PermissionMiddleware::class);
 
             $app->get('/api/users', ListUsers::class);
             $app->post('/api/users', CreateUser::class);
