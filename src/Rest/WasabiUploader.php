@@ -14,6 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
 
 use Psr\Http\Server\RequestHandlerInterface;
 
+use Imagick;
+
 use function json_encode;
 
 final class WasabiUploader implements RequestHandlerInterface
@@ -25,45 +27,81 @@ final class WasabiUploader implements RequestHandlerInterface
         $this->wasabi = $wasabi;
     }
 
+    private function saveFileTempDir(ServerRequestInterface $request): string|null
+    {
+        $uploadedFiles = $request->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['file'];
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+            $filename = $uploadedFile->getClientFilename();
+            $stream = $uploadedFile->getStream();
+            $tempFileName = tempnam(sys_get_temp_dir(), $filename);
+            if (is_resource($stream)) {
+                $fileData = stream_get_contents($stream);
+                file_put_contents($tempFileName, $fileData);
+            } else {
+                file_put_contents($tempFileName, $stream);
+            }
+            return $tempFileName;
+        }
+        return null;
+    }
+
+    private function saveThumbnail(string $tempFileName, string $bucket, string $fileKey)
+    {
+        $image = new Imagick($tempFileName);
+        $newWidth = 100;
+        $newHeight = 100;
+        $image->resizeImage($newWidth, $newHeight, Imagick::FILTER_LANCZOS, 1);
+
+        try {
+            $this->wasabi->putObject([
+                'Bucket' => $bucket,
+                'Key' => $fileKey . '_thumbnail',
+                'Body' => $image->getImageBlob(),
+            ]);
+        } catch (S3Exception $e) {
+            error_log('S3 Upload Error: ' . $e->getMessage());
+        }
+    }
+
+
+    private function saveImage(string $tempFileName, string $bucket, string $fileKey)
+    {
+        $uploader = new MultipartUploader($this->wasabi, $tempFileName, [
+            'bucket' => $bucket,
+            'key' => $fileKey,
+        ]);
+
+        $result = $uploader->upload();
+
+        do {
+            try {
+                $result = $uploader->upload();
+            } catch (MultipartUploadException $e) {
+                $uploader = new MultipartUploader($this->wasabi, $tempFileName, [
+                    'state' => $e->getState(),
+                ]);
+            }
+        } while (!isset($result));
+    }
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $requestData = $request->getParsedBody();
+        $bucket = $requestData['bucket'];
 
         $token = $request->getAttribute('token');
         $fileKey = $token['email'] . '/' . bin2hex(random_bytes(8));
 
-        $requestData = $request->getParsedBody();
+        $tempFileName = $this->saveFileTempDir($request);
 
-        $uploadedFiles = $request->getUploadedFiles();
-        $uploadedFile = $uploadedFiles['file'];
-
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+        if ($tempFileName) {
             try {
-                $result = $this->wasabi->putObject([
-                    'Bucket' => $requestData['bucket'],
-                    'Key' => $fileKey,
-                    'Body' => $uploadedFile->getStream(),
-                ]);
-                error_log(print_r($result->toArray(), true));
-            } catch (S3Exception $e) {
-                error_log(print_r($e, true));
+                $this->saveThumbnail($tempFileName, $bucket, $fileKey);
+                $this->saveImage($tempFileName, $bucket, $fileKey);
+            } finally {
+                unlink($tempFileName);
             }
-
-            // $source = fopen('/path/to/large/file.zip', 'rb');
-            // $uploader = new MultipartUploader($this->wasabi, $source, [
-            //     'bucket' => $requestData['bucket'],
-            //     'key' => $requestData['user_email'] . '/' . bin2hex(random_bytes(8)),
-            // ]);
-            // do {
-            //     try {
-            //         $result = $uploader->upload();
-            //     } catch (MultipartUploadException $e) {
-            //         rewind($source);
-            //         $uploader = new MultipartUploader($this->wasabi, $source, [
-            //             'state' => $e->getState(),
-            //         ]);
-            //     }
-            // } while (!isset($result));
-            // fclose($source);
         }
 
         $body = Stream::create(json_encode(['fileKey' => $fileKey], JSON_PRETTY_PRINT) . PHP_EOL);

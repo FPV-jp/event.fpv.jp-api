@@ -18,6 +18,7 @@
         "ext-json": "*",
         "auth0/auth0-php": "^8.10",
         "aws/aws-sdk-php": "^3.298",
+        "calcinai/php-imagick": "^0.1.2",
         "cloudinary/cloudinary_php": "^2.12",
         "doctrine/orm": "^2.17",
         "fakerphp/faker": "^1.23",
