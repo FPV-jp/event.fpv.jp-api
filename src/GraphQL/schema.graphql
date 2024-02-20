@@ -17,7 +17,7 @@ type Query {
   allOpenChats: [OpenChat!]!
 
   medialibrary(id: ID!): MediaLibrary!
-  allMediaLibraryies: [MediaLibrary!]!
+  allMediaLibraries: [MediaLibrary!]!
 
   # Cloudinary
   assets: CloudinaryAssets!
@@ -46,8 +46,8 @@ type Mutation {
   updateOpenChat(id: ID!, email: String, password: String): OpenChat!
   deleteOpenChat(id: ID!): OpenChat!
 
-  createMediaLibrary(email: String!, password: String!): MediaLibrary!
-  updateMediaLibrary(id: ID!, email: String, password: String): MediaLibrary!
+  createMediaLibrary(createMediaLibraryInput: CreateMediaLibraryInput): MediaLibrary!
+  updateMediaLibrary(updateMediaLibraryInput: UpdateMediaLibraryInput): MediaLibrary!
   deleteMediaLibrary(id: ID!): MediaLibrary!
 }
 

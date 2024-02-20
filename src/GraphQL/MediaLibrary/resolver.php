@@ -19,11 +19,10 @@ return [
         return $medialibraryArray;
     },
     'createMediaLibrary' => function ($rootValue, $args, $context) {
-        // $newMediaLibrary = new MediaLibrary($args['email'], $args['password']);
-        $newRandomMediaLibrary = new MediaLibrary($this->faker->email(), $this->faker->password());
-        $this->em->persist($newRandomMediaLibrary);
+        $newMediaLibrary = new MediaLibrary($args['createMediaLibraryInput'], $context['token']);
+        $this->em->persist($newMediaLibrary);
         $this->em->flush();
-        return $newRandomMediaLibrary->jsonSerialize();
+        return $newMediaLibrary->jsonSerialize();
     },
     'updateMediaLibrary' => function ($rootValue, $args, $context) {
         $medialibrary = $this->em->getRepository(MediaLibrary::class)->find($args['id']);

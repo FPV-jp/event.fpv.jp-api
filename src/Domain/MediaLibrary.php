@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\DBAL\Types\Types;
 use JsonSerializable;
-use function password_hash;
 
 // The MediaLibrary class demonstrates how to annotate a simple PHP class to act as a Doctrine entity.
 
@@ -20,19 +19,36 @@ final class MediaLibrary implements JsonSerializable
     #[Id, Column(type: Types::INTEGER), GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    #[Column(name: 'email', type: Types::STRING, unique: true, nullable: false)]
-    private string $email;
+    #[Column(name: 'owner', type: Types::STRING, unique: false, nullable: false)]
+    private string $owner;
 
-    #[Column(name: 'bcrypt_hash', type: Types::STRING, length: 60, nullable: false)]
-    private string $hash;
-    
+    #[Column(name: 'is_public', type: Types::BOOLEAN, options: ['default' => true], nullable: false)]
+    private bool $is_public;
+
+    #[Column(name: 'file_name', type: Types::STRING, unique: false, nullable: false)]
+    private string $file_name;
+
+    #[Column(name: 'file_type', type: Types::STRING, unique: false, nullable: false)]
+    private string $file_type;
+
+    #[Column(name: 'file_size', type: Types::INTEGER, nullable: false)]
+    private int $file_size;
+
+    #[Column(name: 'wasabi_file_key', type: Types::STRING, unique: false, nullable: false)]
+    private string $wasabi_file_key;
+
     #[Column(name: 'registered_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $registeredAt;
 
-    public function __construct(string $email, string $password)
+    public function __construct(array $mediaLibrary, array $token)
     {
-        $this->email = $email;
-        $this->hash = password_hash($password, PASSWORD_BCRYPT);
+        $this->owner = $token['email'];
+        $this->is_public = false;
+        $this->file_name = $mediaLibrary['file_name'];
+        $this->file_type = $mediaLibrary['file_type'];
+        $this->file_name = $mediaLibrary['file_name'];
+        $this->file_size = $mediaLibrary['file_size'];
+        $this->wasabi_file_key = $mediaLibrary['wasabi_file_key'];
         $this->registeredAt = new DateTimeImmutable('now');
     }
 
@@ -41,14 +57,29 @@ final class MediaLibrary implements JsonSerializable
         return $this->id;
     }
 
-    public function getEmail(): string
+    public function isPublic(): bool
     {
-        return $this->email;
+        return $this->is_public;
     }
 
-    public function getHash(): string
+    public function getFileName(): string
     {
-        return $this->hash;
+        return $this->file_name;
+    }
+
+    public function getFileType(): string
+    {
+        return $this->file_type;
+    }
+
+    public function getFileSize(): int
+    {
+        return $this->file_size;
+    }
+
+    public function getWasabiFileKey(): string
+    {
+        return $this->wasabi_file_key;
     }
 
     public function getRegisteredAt(): DateTimeImmutable
@@ -76,7 +107,11 @@ final class MediaLibrary implements JsonSerializable
     {
         return [
             'id' => $this->getId(),
-            'email' => $this->getEmail(),
+            'is_public' => $this->isPublic(),
+            'file_name' => $this->getFileName(),
+            'file_type' => $this->getFileType(),
+            'file_size' => $this->getFileSize(),
+            'wasabi_file_key' => $this->getWasabiFileKey(),
             'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM)
         ];
     }

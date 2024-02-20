@@ -1,7 +1,21 @@
+input CreateMediaLibraryInput {
+  file_name: String!
+  file_type: String!
+  file_size: Int!
+  wasabi_file_key: String!
+}
+
 type MediaLibrary {
   id: ID!
-  email: String!
-  bcrypt_hash: String!
+  is_public: Boolean!
+  file_name: String!
+  file_type: String!
+  file_size: Int!
+  wasabi_file_key: String!
   registered_at: String!
 }
 
+input UpdateMediaLibraryInput {
+  id: ID!
+  is_public: Boolean!
+}
