@@ -27,31 +27,35 @@ final class WasabiUploader implements RequestHandlerInterface
         $this->wasabi = $wasabi;
     }
 
-    private function saveFileTempDir(ServerRequestInterface $request): string|null
+    private function saveThumbnail(Imagick $image, string $bucket, string $fileKey, string $thumbnail)
     {
-        $uploadedFiles = $request->getUploadedFiles();
-        $uploadedFile = $uploadedFiles['file'];
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $filename = $uploadedFile->getClientFilename();
-            $stream = $uploadedFile->getStream();
-            $tempFileName = tempnam(sys_get_temp_dir(), $filename);
-            if (is_resource($stream)) {
-                $fileData = stream_get_contents($stream);
-                file_put_contents($tempFileName, $fileData);
-            } else {
-                file_put_contents($tempFileName, $stream);
-            }
-            return $tempFileName;
-        }
-        return null;
-    }
 
-    private function saveThumbnail(string $tempFileName, string $bucket, string $fileKey)
-    {
-        $image = new Imagick($tempFileName);
-        $newWidth = 100;
-        $newHeight = 100;
-        $image->resizeImage($newWidth, $newHeight, Imagick::FILTER_LANCZOS, 1);
+        if ($thumbnail == 'map') {
+            $image->resizeImage(200, 200, Imagick::FILTER_LANCZOS, 1);
+
+            $tempFileName = tempnam(sys_get_temp_dir(), 'resizedImage');
+            file_put_contents($tempFileName, $image->getImageBlob());
+            $imageInfo = getimagesize($tempFileName);
+
+            $newSize = min($imageInfo[0], $imageInfo[1]);
+            $x = max(0, ($imageInfo[0] - $newSize) / 2);
+            $y = max(0, ($imageInfo[1] - $newSize) / 2);
+            $image->cropImage($newSize, $newSize, $x, $y);
+        }
+
+        if ($thumbnail == 'media') {
+            $image->resizeImage(343, 343, Imagick::FILTER_LANCZOS, 1);
+
+            // $tempFileName = tempnam(sys_get_temp_dir(), 'resizedImage');
+            // file_put_contents($tempFileName, $image->getImageBlob());
+            // $imageInfo = getimagesize($tempFileName);
+
+            // $newSize = min($imageInfo[0], $imageInfo[1]);
+            // //     $newWidth = (int)round($imageInfo[1] * 1.618); 
+            // if ($imageInfo[0] > $imageInfo[1]) {
+
+            // }
+        }
 
         try {
             $this->wasabi->putObject([
@@ -61,6 +65,10 @@ final class WasabiUploader implements RequestHandlerInterface
             ]);
         } catch (S3Exception $e) {
             error_log('S3 Upload Error: ' . $e->getMessage());
+        } finally {
+            if ($thumbnail == 'map') {
+                unlink($tempFileName);
+            }
         }
     }
 
@@ -89,19 +97,26 @@ final class WasabiUploader implements RequestHandlerInterface
     {
         $requestData = $request->getParsedBody();
         $bucket = $requestData['bucket'];
+        $thumbnail = $requestData['thumbnail'];
+
+        error_log(print_r($requestData, true));
 
         $token = $request->getAttribute('token');
         $fileKey = $token['email'] . '/' . bin2hex(random_bytes(8));
 
-        $tempFileName = $this->saveFileTempDir($request);
+        // $tempFileName = $this->saveFileTempDir($request);
+        $uploadedFiles = $request->getUploadedFiles();
+        error_log(print_r($uploadedFiles, true));
 
-        if ($tempFileName) {
-            try {
-                $this->saveThumbnail($tempFileName, $bucket, $fileKey);
-                $this->saveImage($tempFileName, $bucket, $fileKey);
-            } finally {
-                unlink($tempFileName);
-            }
+        $uploadedFile = $uploadedFiles['file'];
+
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+
+            $tempFileName = $uploadedFile->getStream()->getMetadata('uri');
+            $image = new Imagick($tempFileName);
+            $this->saveThumbnail($image, $bucket, $fileKey, $thumbnail);
+            $this->saveImage($tempFileName, $bucket, $fileKey);
+
         }
 
         $body = Stream::create(json_encode(['fileKey' => $fileKey], JSON_PRETTY_PRINT) . PHP_EOL);
