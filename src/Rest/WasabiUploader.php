@@ -27,10 +27,10 @@ final class WasabiUploader implements RequestHandlerInterface
         $this->wasabi = $wasabi;
     }
 
-    private function saveThumbnail(Imagick $image, string $bucket, string $fileKey, string $thumbnail)
+    private function saveThumbnail(Imagick $image, string $bucket, string $fileKey, string $thumbnailType)
     {
 
-        if ($thumbnail == 'map') {
+        if ($thumbnailType == 'map') {
             $image->resizeImage(200, 200, Imagick::FILTER_LANCZOS, 1);
 
             $tempFileName = tempnam(sys_get_temp_dir(), 'resizedImage');
@@ -43,7 +43,7 @@ final class WasabiUploader implements RequestHandlerInterface
             $image->cropImage($newSize, $newSize, $x, $y);
         }
 
-        if ($thumbnail == 'media') {
+        if ($thumbnailType == 'media') {
             $image->resizeImage(343, 343, Imagick::FILTER_LANCZOS, 1);
 
             // $tempFileName = tempnam(sys_get_temp_dir(), 'resizedImage');
@@ -66,14 +66,14 @@ final class WasabiUploader implements RequestHandlerInterface
         } catch (S3Exception $e) {
             error_log('S3 Upload Error: ' . $e->getMessage());
         } finally {
-            if ($thumbnail == 'map') {
+            if ($thumbnailType == 'map') {
                 unlink($tempFileName);
             }
         }
     }
 
 
-    private function saveImage(string $tempFileName, string $bucket, string $fileKey)
+    private function uploadWasabi(string $tempFileName, string $bucket, string $fileKey)
     {
         $uploader = new MultipartUploader($this->wasabi, $tempFileName, [
             'bucket' => $bucket,
@@ -97,29 +97,47 @@ final class WasabiUploader implements RequestHandlerInterface
     {
         $requestData = $request->getParsedBody();
         $bucket = $requestData['bucket'];
-        $thumbnail = $requestData['thumbnail'];
+        $thumbnailType = $requestData['thumbnailType'];
 
         error_log(print_r($requestData, true));
 
         $token = $request->getAttribute('token');
         $fileKey = $token['email'] . '/' . bin2hex(random_bytes(8));
 
-        // $tempFileName = $this->saveFileTempDir($request);
         $uploadedFiles = $request->getUploadedFiles();
-        error_log(print_r($uploadedFiles, true));
 
         $uploadedFile = $uploadedFiles['file'];
 
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
 
             $tempFileName = $uploadedFile->getStream()->getMetadata('uri');
-            $image = new Imagick($tempFileName);
-            $this->saveThumbnail($image, $bucket, $fileKey, $thumbnail);
-            $this->saveImage($tempFileName, $bucket, $fileKey);
+
+            $clientMediaType = $uploadedFile->getClientMediaType();
+            if (strpos($clientMediaType, 'video/') === 0) {
+ 
+                $posterFile = $uploadedFiles['poster'];
+                $tempPosterFileName = $posterFile->getStream()->getMetadata('uri');
+                $image = new Imagick($tempPosterFileName);
+                $this->saveThumbnail($image, $bucket, $fileKey, $thumbnailType);
+
+            } elseif (strpos($clientMediaType, 'image/') === 0) {
+
+                $image = new Imagick($tempFileName);
+                $this->saveThumbnail($image, $bucket, $fileKey, $thumbnailType);
+
+            } else {
+
+            }
+    
+            $this->uploadWasabi($tempFileName, $bucket, $fileKey);
 
         }
 
-        $body = Stream::create(json_encode(['fileKey' => $fileKey], JSON_PRETTY_PRINT) . PHP_EOL);
+        $body = Stream::create(json_encode([
+            'fileKey' => $fileKey,
+            'clientFilename' => $uploadedFile->getClientFilename(),
+            'clientMediaType' => $uploadedFile->getClientMediaType(),
+        ], JSON_PRETTY_PRINT) . PHP_EOL);
         return new Response(201, ['Content-Type' => 'application/json'], $body);
     }
 }
