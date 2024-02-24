@@ -58,7 +58,7 @@ jobs:
         username: fpv
         port: 22
         key: ${{ secrets.KEY }}
-        source: .env,bootstrap.php,settings.php,private_html/,src/,vendor/
+        source: .env,bootstrap.php,settings.php,private_html/,src/,vendor/,mariadb/
         target: /home/fpv/domains/event.fpv.jp/
         overwrite: true
 
@@ -70,7 +70,7 @@ jobs:
         username: fpv
         port: 22
         key: ${{ secrets.KEY }}
-        source: .env,bootstrap.php,settings.php,private_html/,src/,vendor/
+        source: .env,bootstrap.php,settings.php,private_html/,src/,vendor/,mariadb/
         target: /home/fpv/domains/fpv.v2008.coreserver.jp/
         overwrite: true
 
