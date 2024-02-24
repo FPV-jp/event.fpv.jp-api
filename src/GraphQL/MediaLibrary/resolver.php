@@ -15,7 +15,6 @@ return [
         foreach ($medialibrarys as $medialibrary) {
             $medialibraryArray[] = $medialibrary->jsonSerialize();
         }
-        error_log(print_r($medialibraryArray, true));
         return $medialibraryArray;
     },
     'createMediaLibrary' => function ($rootValue, $args, $context) {

@@ -35,13 +35,13 @@ final class MediaLibrary implements JsonSerializable
     private int $file_size;
 
     #[Column(name: 'file_width', type: Types::INTEGER, nullable: true)]
-    private int $file_width;
+    private int | null $file_width;
 
     #[Column(name: 'file_height', type: Types::INTEGER, nullable: true)]
-    private int $file_height;
+    private int | null $file_height;
 
     #[Column(name: 'file_duration', type: Types::FLOAT, nullable: true)]
-    private int $file_duration;
+    private int | null $file_duration;
 
     #[Column(name: 'file_last_modified', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $file_last_modified;
@@ -105,17 +105,17 @@ final class MediaLibrary implements JsonSerializable
         return $this->file_size;
     }
 
-    public function getFileWidth(): int
+    public function getFileWidth(): int | null
     {
         return $this->file_width;
     }
 
-    public function getFileHeight(): int
+    public function getFileHeight(): int | null
     {
         return $this->file_height;
     }
 
-    public function getFileDuration(): float
+    public function getFileDuration(): float | null
     {
         return $this->file_duration;
     }
@@ -153,11 +153,11 @@ final class MediaLibrary implements JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
+        $data = [
             'id' => $this->getId(),
-            'file_name' => $this->getFileName(),
-            'is_public' => $this->isPublic(),
             'owner' => $this->getOwner(),
+            'is_public' => $this->isPublic(),
+            'file_name' => $this->getFileName(),
             'file_type' => $this->getFileType(),
             'file_size' => $this->getFileSize(),
             'file_width' => $this->getFileWidth(),
@@ -165,7 +165,15 @@ final class MediaLibrary implements JsonSerializable
             'file_duration' => $this->getFileDuration(),
             'file_last_modified' => $this->getFileLastModified()->format(DateTimeImmutable::ATOM),
             'wasabi_file_key' => $this->getWasabiFileKey(),
-            'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM)
+            'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM),
         ];
+
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                unset($data[$key]);
+            }
+        }
+    
+        return $data;
     }
 }
