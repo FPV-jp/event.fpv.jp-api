@@ -27,6 +27,44 @@ final class WasabiUploader implements RequestHandlerInterface
         $this->wasabi = $wasabi;
     }
 
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $requestData = $request->getParsedBody();
+        $bucket = $requestData['bucket'];
+
+        $token = $request->getAttribute('token');
+        $fileKey = $token['email'] . '/' . bin2hex(random_bytes(8));
+
+        $uploadedFiles = $request->getUploadedFiles();
+        $uploadedFile = $uploadedFiles['file'];
+
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+
+            $tempFileName = $uploadedFile->getStream()->getMetadata('uri');
+            $fileSize = $uploadedFile->getSize();
+
+            $clientMediaType = $uploadedFile->getClientMediaType();
+            if (strpos($clientMediaType, 'video/') === 0||strpos($clientMediaType, 'image/') === 0) {
+
+                $thumbnailFile = $uploadedFiles['thumbnail'];
+                $tempThumbnailFileName = $thumbnailFile->getStream()->getMetadata('uri');
+                $this->uploadWasabi($tempThumbnailFileName, $bucket, $fileKey . '_thumbnail');
+
+            }
+
+            if ($fileSize < 100 * 1024 * 1024) {// 100MB
+                $this->uploadWasabi($tempFileName, $bucket, $fileKey);
+            } else {
+                $this->uploadWasabiMultipart($tempFileName, $bucket, $fileKey);
+            }
+
+        }
+
+        $body = Stream::create(json_encode(['wasabi_file_key' => $fileKey], JSON_PRETTY_PRINT) . PHP_EOL);
+        return new Response(201, ['Content-Type' => 'application/json'], $body);
+    }
+
+
     private function uploadWasabi(string $tempFileName, string $bucket, string $fileKey)
     {
         try {
@@ -61,31 +99,4 @@ final class WasabiUploader implements RequestHandlerInterface
         } while (!isset($result));
     }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
-        $requestData = $request->getParsedBody();
-        $bucket = $requestData['bucket'];
-
-        $token = $request->getAttribute('token');
-        $fileKey = $token['email'] . '/' . bin2hex(random_bytes(8));
-
-        $uploadedFiles = $request->getUploadedFiles();
-        $uploadedFile = $uploadedFiles['file'];
-
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-
-            $tempFileName = $uploadedFile->getStream()->getMetadata('uri');
-            $fileSize = $uploadedFile->getSize();
-
-            if ($fileSize < 100 * 1024 * 1024) {// 100MB
-                $this->uploadWasabi($tempFileName, $bucket, $fileKey);
-            } else {
-                $this->uploadWasabiMultipart($tempFileName, $bucket, $fileKey);
-            }
-
-        }
-
-        $body = Stream::create(json_encode(['wasabi_file_key' => $fileKey], JSON_PRETTY_PRINT) . PHP_EOL);
-        return new Response(201, ['Content-Type' => 'application/json'], $body);
-    }
 }
