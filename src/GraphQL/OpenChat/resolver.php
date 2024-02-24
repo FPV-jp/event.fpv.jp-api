@@ -9,7 +9,7 @@ return [
     },
     'allOpenChats' => function ($rootValue, $args, $context) {
         $token = $context['token'];
-        error_log(print_r($token, true));
+        // error_log(print_r($token, true));
 
         $openchats = $this->em->getRepository(OpenChat::class)->findAll();
         $openchatArray = [];

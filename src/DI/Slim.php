@@ -23,6 +23,9 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 use FpvJp\Middleware\PermissionMiddleware;
+use FpvJp\Middleware\CorsMiddleware;
+
+use FpvJp\Handler\DefaultErrorHandler;
 
 use FpvJp\Rest\CreateUser;
 use FpvJp\Rest\ListUsers;
@@ -36,6 +39,13 @@ use FpvJp\GraphQL\SchemaHandler;
 use Cloudinary\Api\Admin\AdminApi;
 
 use PHPMailer\PHPMailer\PHPMailer;
+
+use Slim\Exception\HttpInternalServerErrorException;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+use Nyholm\Psr7\Response;
+use Nyholm\Psr7\Stream;
 
 /**
  * A ServiceProvider for registering services related to Slim such as request handlers,
@@ -76,24 +86,18 @@ final class Slim implements ServiceProvider
             $app = AppFactory::create(null, $ci);
 
             $app->addRoutingMiddleware();
-
-            $app->add(function ($request, $handler) {
-                $response = $handler->handle($request);
-                return $response
-                    ->withHeader('Access-Control-Allow-Origin', '*')
-                    ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-                    ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-            });
-
             $app->add(new ContentLengthMiddleware());
+            $app->add(new CorsMiddleware());
 
             $app->options('/{routes:.+}', function ($request, $response, $args) {
                 return $response;
             });
+
             $app->get('/api/phpinfo', function ($request, $response, $args) {
                 $response->getBody()->write(json_encode(phpinfo()));
                 return $response;
             });
+
             $app->post('/api/wasabi', WasabiUploader::class)->add(PermissionMiddleware::class);
             $app->post('/api/wasabi2', WasabiDownloader::class)->add(PermissionMiddleware::class);
 
@@ -102,14 +106,21 @@ final class Slim implements ServiceProvider
 
             $app->post('/graphql', SchemaHandler::class)->add(PermissionMiddleware::class);
 
-            $logger = new MonologLogger('app', [new StreamHandler(__DIR__ . '/app.log', Logger::DEBUG)]);
-            $app->addErrorMiddleware(
+            $monologLogger = new Logger('app');
+            $streamHandler = new StreamHandler(__DIR__ . '/app.log', 100);
+            $monologLogger->pushHandler($streamHandler);
+            $errorMiddleware = $app->addErrorMiddleware(
                 $settings['slim']['displayErrorDetails'],
                 $settings['slim']['logErrors'],
                 $settings['slim']['logErrorDetails'],
-                $logger
+                $monologLogger,
             );
-
+            $defaultErrorHandler = new DefaultErrorHandler($app->getCallableResolver(), $app->getResponseFactory());
+            $errorMiddleware->setDefaultErrorHandler($defaultErrorHandler);
+            $errorMiddleware->setErrorHandler(HttpInternalServerErrorException::class, function (ServerRequestInterface $request, Throwable $exception, bool $displayErrorDetails):ResponseInterface {
+                $body = Stream::create(json_encode(['message' => $exception->getMessage()], JSON_PRETTY_PRINT) . PHP_EOL);
+                return new Response(500, ['Content-Type' => 'application/json'], $body);
+            });
             return $app;
         });
     }

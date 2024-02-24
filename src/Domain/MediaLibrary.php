@@ -34,6 +34,18 @@ final class MediaLibrary implements JsonSerializable
     #[Column(name: 'file_size', type: Types::INTEGER, nullable: false)]
     private int $file_size;
 
+    #[Column(name: 'file_width', type: Types::INTEGER, nullable: true)]
+    private int $file_width;
+
+    #[Column(name: 'file_height', type: Types::INTEGER, nullable: true)]
+    private int $file_height;
+
+    #[Column(name: 'file_duration', type: Types::FLOAT, nullable: true)]
+    private int $file_duration;
+
+    #[Column(name: 'file_last_modified', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
+    private DateTimeImmutable $file_last_modified;
+
     #[Column(name: 'wasabi_file_key', type: Types::STRING, unique: false, nullable: false)]
     private string $wasabi_file_key;
 
@@ -42,12 +54,23 @@ final class MediaLibrary implements JsonSerializable
 
     public function __construct(array $mediaLibrary, array $token)
     {
+        error_log(print_r($mediaLibrary, true));
         $this->owner = $token['email'];
         $this->is_public = false;
         $this->file_name = $mediaLibrary['file_name'];
         $this->file_type = $mediaLibrary['file_type'];
         $this->file_name = $mediaLibrary['file_name'];
         $this->file_size = $mediaLibrary['file_size'];
+        if (isset($args['file_width'])) {
+            $this->file_size = $mediaLibrary['file_width'];
+        }
+        if (isset($args['file_height'])) {
+            $this->file_size = $mediaLibrary['file_height'];
+        }
+        if (isset($args['file_duration'])) {
+            $this->file_size = $mediaLibrary['file_duration'];
+        }
+        $this->file_last_modified = new DateTimeImmutable($mediaLibrary['file_last_modified']);
         $this->wasabi_file_key = $mediaLibrary['wasabi_file_key'];
         $this->registeredAt = new DateTimeImmutable('now');
     }
@@ -55,6 +78,11 @@ final class MediaLibrary implements JsonSerializable
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getOwner(): string
+    {
+        return $this->owner;
     }
 
     public function isPublic(): bool
@@ -75,6 +103,26 @@ final class MediaLibrary implements JsonSerializable
     public function getFileSize(): int
     {
         return $this->file_size;
+    }
+
+    public function getFileWidth(): int
+    {
+        return $this->file_width;
+    }
+
+    public function getFileHeight(): int
+    {
+        return $this->file_height;
+    }
+
+    public function getFileDuration(): float
+    {
+        return $this->file_duration;
+    }
+
+    public function getFileLastModified(): DateTimeImmutable
+    {
+        return $this->file_last_modified;
     }
 
     public function getWasabiFileKey(): string
@@ -107,10 +155,15 @@ final class MediaLibrary implements JsonSerializable
     {
         return [
             'id' => $this->getId(),
-            'is_public' => $this->isPublic(),
             'file_name' => $this->getFileName(),
+            'is_public' => $this->isPublic(),
+            'owner' => $this->getOwner(),
             'file_type' => $this->getFileType(),
             'file_size' => $this->getFileSize(),
+            'file_width' => $this->getFileWidth(),
+            'file_height' => $this->getFileHeight(),
+            'file_duration' => $this->getFileDuration(),
+            'file_last_modified' => $this->getFileLastModified()->format(DateTimeImmutable::ATOM),
             'wasabi_file_key' => $this->getWasabiFileKey(),
             'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM)
         ];

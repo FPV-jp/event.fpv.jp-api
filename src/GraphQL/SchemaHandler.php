@@ -118,13 +118,17 @@ final class SchemaHandler implements RequestHandlerInterface
                 // array $validationRules = null
             );
 
+            $body = Stream::create(json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL);
+            return new Response(200, ['Content-Type' => 'application/json'], $body);
+
         } catch (\Exception $e) {
-            error_log($e->getMessage());
-            $result = FormattedError::createFromException($e);
+
+            $body = Stream::create(json_encode([
+                'errors' => [FormattedError::createFromException($e)]
+            ], JSON_PRETTY_PRINT) . PHP_EOL);
+
+            return new Response(500, ['Content-Type' => 'application/json'], $body);
+            
         }
-
-        $body = Stream::create(json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL);
-
-        return new Response(200, ['Content-Type' => 'application/json'], $body);
     }
 }

@@ -34,7 +34,7 @@ final class WasabiDownloader implements RequestHandlerInterface
                 'Bucket' => $requestData['bucket'],
                 'Key' => $requestData['fileKey'],
             ]);
-            error_log(print_r($result, true));
+            // error_log(print_r($result, true));
         } catch (S3Exception $e) {
             return new Response(500, ['Content-Type' => 'text/plain'], 'Failed to retrieve file from Wasabi');
         }

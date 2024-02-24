@@ -2,15 +2,24 @@ input CreateMediaLibraryInput {
   file_name: String!
   file_type: String!
   file_size: Int!
+  file_width: Int
+  file_height: Int
+  file_duration: Float
+  file_last_modified: String!
   wasabi_file_key: String!
 }
 
 type MediaLibrary {
   id: ID!
+  owner: String!
   is_public: Boolean!
   file_name: String!
   file_type: String!
   file_size: Int!
+  file_width: Int
+  file_height: Int
+  file_duration: Float
+  file_last_modified: String!
   wasabi_file_key: String!
   registered_at: String!
 }
