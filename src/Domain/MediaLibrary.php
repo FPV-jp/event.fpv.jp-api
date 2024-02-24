@@ -35,13 +35,13 @@ final class MediaLibrary implements JsonSerializable
     private int $file_size;
 
     #[Column(name: 'file_width', type: Types::INTEGER, nullable: true)]
-    private int | null $file_width;
+    private int|null $file_width = null;
 
     #[Column(name: 'file_height', type: Types::INTEGER, nullable: true)]
-    private int | null $file_height;
+    private int|null $file_height = null;
 
     #[Column(name: 'file_duration', type: Types::FLOAT, nullable: true)]
-    private int | null $file_duration;
+    private float|null $file_duration = null;
 
     #[Column(name: 'file_last_modified', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $file_last_modified;
@@ -61,14 +61,14 @@ final class MediaLibrary implements JsonSerializable
         $this->file_type = $mediaLibrary['file_type'];
         $this->file_name = $mediaLibrary['file_name'];
         $this->file_size = $mediaLibrary['file_size'];
-        if (isset($args['file_width'])) {
-            $this->file_size = $mediaLibrary['file_width'];
+        if (isset($mediaLibrary['file_width'])) {
+            $this->file_width = $mediaLibrary['file_width'];
         }
-        if (isset($args['file_height'])) {
-            $this->file_size = $mediaLibrary['file_height'];
+        if (isset($mediaLibrary['file_height'])) {
+            $this->file_height = $mediaLibrary['file_height'];
         }
-        if (isset($args['file_duration'])) {
-            $this->file_size = $mediaLibrary['file_duration'];
+        if (isset($mediaLibrary['file_duration'])) {
+            $this->file_duration = $mediaLibrary['file_duration'];
         }
         $this->file_last_modified = new DateTimeImmutable($mediaLibrary['file_last_modified']);
         $this->wasabi_file_key = $mediaLibrary['wasabi_file_key'];
@@ -105,17 +105,17 @@ final class MediaLibrary implements JsonSerializable
         return $this->file_size;
     }
 
-    public function getFileWidth(): int | null
+    public function getFileWidth(): int|null
     {
         return $this->file_width;
     }
 
-    public function getFileHeight(): int | null
+    public function getFileHeight(): int|null
     {
         return $this->file_height;
     }
 
-    public function getFileDuration(): float | null
+    public function getFileDuration(): float|null
     {
         return $this->file_duration;
     }
@@ -167,13 +167,11 @@ final class MediaLibrary implements JsonSerializable
             'wasabi_file_key' => $this->getWasabiFileKey(),
             'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM),
         ];
-
         foreach ($data as $key => $value) {
             if ($value === null) {
                 unset($data[$key]);
             }
         }
-    
         return $data;
     }
 }

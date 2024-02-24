@@ -11,11 +11,11 @@ class EchoSQLLogger implements SQLLogger
         error_log($sql);
 
         if ($params) {
-            error_log("Parameters: " . print_r($params, true));
+            // error_log("Parameters: " . print_r($params, true));
         }
 
         if ($types) {
-            error_log("Types: " . print_r($types, true));
+            // error_log("Types: " . print_r($types, true));
         }
 
     }
