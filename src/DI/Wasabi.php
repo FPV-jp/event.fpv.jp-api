@@ -26,7 +26,7 @@ class Wasabi implements ServiceProvider
                 'version' => 'latest',
                 'use_path_style_endpoint' => true
             );
-            
+            putenv('AWS_CONFIG_FILE=' . $settings['wasabi']['config']);
             $s3Client = S3Client::factory($raw_credentials);
             return $s3Client;
         });

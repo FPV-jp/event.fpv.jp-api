@@ -14,4 +14,7 @@ up-d:
 down:
 	docker compose down
 
+destroy:
+	docker system prune --all --force --volumes
+
 restart-api: down up

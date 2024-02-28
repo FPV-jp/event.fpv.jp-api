@@ -23,7 +23,7 @@ class Mailer implements ServiceProvider
             $mailer->Username = $settings['mail']['username'];
             $mailer->Password = $settings['mail']['password'];
             $mailer->Port = 587;
-            $mailer->setFrom($settings['mail']['username'], $settings['mail']['sender']);
+            $mailer->setFrom($settings['mail']['username'], 'FPV Japan' . $settings['mail']['env']);
 
             return $mailer;
         });

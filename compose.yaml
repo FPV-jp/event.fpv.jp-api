@@ -25,8 +25,7 @@ services:
       timeout: 2s
       retries: 3
     volumes:
-      - ./mariadb/initdb:/docker-entrypoint-initdb.d
-      - ./mariadb/data:/var/lib/mysql
+      - ./mariadb/local-data:/var/lib/mysql
 
 secrets:
   password:

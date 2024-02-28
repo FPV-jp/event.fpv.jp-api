@@ -1,5 +1,5 @@
 /vendor/
 .env
-mariadb/data/
+mariadb/local-data/
 src/doctrine/
 app.log

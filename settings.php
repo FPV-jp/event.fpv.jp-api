@@ -50,7 +50,7 @@ return [
             'host' => $_ENV['MAIL_HOST'],
             'username' => $_ENV['MAIL_USERNAME'],
             'password' => $_ENV['MAIL_PASSWORD'],
-            'sender' => $_ENV['MAIL_SENDER'],
+            'env' => $_ENV['MAIL_ENV'],
         ],
         
         'cloudinary' => [
@@ -62,6 +62,7 @@ return [
         'wasabi' => [
             'apikey' => $_ENV['WASABI_API_KEY'],
             'apisecret' => $_ENV['WASABI_API_SECRET'],
+            'config' => $_ENV['WASABI_CONFIG_FILE'],
         ],
 
     ]
