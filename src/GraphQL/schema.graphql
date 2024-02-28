@@ -34,8 +34,8 @@ type Mutation {
   updateUser(user: UpdateUserInput): User!
   deleteUser(id: ID!): User!
 
-  createEventSchedule(email: String!, password: String!): EventSchedule!
-  updateEventSchedule(id: ID!, email: String, password: String): EventSchedule!
+  createEventSchedule(createEventScheduleInput: CreateEventScheduleInput): EventSchedule!
+  updateEventSchedule(updateEventScheduleInput: UpdateEventScheduleInput): EventSchedule!
   deleteEventSchedule(id: ID!): EventSchedule!
 
   createFlightPoint(createFlightPointInput: CreateFlightPointInput): FlightPoint!

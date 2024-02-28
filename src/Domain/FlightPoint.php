@@ -21,14 +21,19 @@ final class FlightPoint implements JsonSerializable
     private int $id;
     #[Column(name: 'latitude', type: Types::FLOAT, unique: false, nullable: false)]
     private float $latitude;
+    
     #[Column(name: 'longitude', type: Types::FLOAT, unique: false, nullable: false)]
     private float $longitude;
+
     #[Column(name: 'title', type: Types::STRING, unique: false, nullable: false)]
     private string $title;
+
     #[Column(name: 'create_user', type: Types::STRING, unique: false, nullable: false)]
     private string $create_user;
+
     #[Column(name: 'marker_image', type: Types::STRING, unique: false, nullable: false)]
     private string $marker_image;
+
     #[Column(name: 'registered_at', type: Types::DATETIMETZ_IMMUTABLE, nullable: false)]
     private DateTimeImmutable $registeredAt;
 

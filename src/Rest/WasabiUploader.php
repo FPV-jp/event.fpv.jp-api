@@ -14,8 +14,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 use Psr\Http\Server\RequestHandlerInterface;
 
-use Imagick;
-
 use function json_encode;
 
 final class WasabiUploader implements RequestHandlerInterface
