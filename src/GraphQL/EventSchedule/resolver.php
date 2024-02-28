@@ -19,11 +19,10 @@ return [
         return $eventscheduleArray;
     },
     'createEventSchedule' => function ($rootValue, $args, $context) {
-        // $newEventSchedule = new EventSchedule($args['email'], $args['password']);
-        $newRandomEventSchedule = new EventSchedule($this->faker->email(), $this->faker->password());
-        $this->em->persist($newRandomEventSchedule);
+        $newEventSchedule = new EventSchedule($args['createFlightPointInput'], $context['token']);
+        $this->em->persist($newEventSchedule);
         $this->em->flush();
-        return $newRandomEventSchedule->jsonSerialize();
+        return $newEventSchedule->jsonSerialize();
     },
     'updateEventSchedule' => function ($rootValue, $args, $context) {
         $eventschedule = $this->em->getRepository(EventSchedule::class)->find($args['id']);
