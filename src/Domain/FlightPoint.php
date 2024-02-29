@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\DBAL\Types\Types;
 use JsonSerializable;
-use function password_hash;
 
 // The FlightPoint class demonstrates how to annotate a simple PHP class to act as a Doctrine entity.
 

@@ -19,7 +19,7 @@ return [
         return $eventscheduleArray;
     },
     'createEventSchedule' => function ($rootValue, $args, $context) {
-        $newEventSchedule = new EventSchedule($args['createFlightPointInput'], $context['token']);
+        $newEventSchedule = new EventSchedule($args['createEventScheduleInput'], $context['token']);
         $this->em->persist($newEventSchedule);
         $this->em->flush();
         return $newEventSchedule->jsonSerialize();

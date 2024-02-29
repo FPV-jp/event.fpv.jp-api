@@ -10,7 +10,6 @@ type EventSchedule {
   id: ID!
   create_user: String!
   event_title: String!
-  event_title: String!
   event_color: String!
   start_datetime: String!
   end_datetime: String!
