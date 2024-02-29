@@ -79,7 +79,7 @@ final class EventSchedule implements JsonSerializable
         return $this->start_datetime;
     }
 
-    public function getEndDatetime(): DateTimeImmutable
+    public function getEndDatetime(): DateTimeImmutable | null
     {
         return $this->end_datetime;
     }
@@ -118,7 +118,7 @@ final class EventSchedule implements JsonSerializable
             'event_title' => $this->getEventTitle(),
             'event_color' => $this->getEventColor(),
             'start_datetime' => $this->getStartDatetime()->format(DateTimeImmutable::ATOM),
-            'end_datetime' => $this->getEndDatetime()->format(DateTimeImmutable::ATOM),
+            'end_datetime' => isset($end_datetime) ? $this->getEndDatetime()->format(DateTimeImmutable::ATOM) : null,
             'all_day' => $this->getAllDay(),
             'registered_at' => $this->getRegisteredAt()->format(DateTimeImmutable::ATOM)
         ];

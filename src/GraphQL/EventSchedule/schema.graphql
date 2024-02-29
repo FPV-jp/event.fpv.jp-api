@@ -2,7 +2,7 @@ input CreateEventScheduleInput {
   event_title: String!
   event_color: String!
   start_datetime: String!
-  end_datetime: String!
+  end_datetime: String
   all_day: Boolean!
 }
 
@@ -12,7 +12,7 @@ type EventSchedule {
   event_title: String!
   event_color: String!
   start_datetime: String!
-  end_datetime: String!
+  end_datetime: String
   all_day: Boolean!
   registered_at: String!
 }
